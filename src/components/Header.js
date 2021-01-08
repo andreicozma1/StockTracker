@@ -1,6 +1,6 @@
 import { AppBar, IconButton, makeStyles, Menu, MenuItem, Toolbar, Typography } from '@material-ui/core';
 import {useState} from 'react'
-import {MoreVert} from '@material-ui/icons/'
+import {MoreVert} from '@material-ui/icons'
 
 const useStyles = makeStyles((theme) => ({
     title: {

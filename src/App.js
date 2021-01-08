@@ -24,11 +24,11 @@ const pageConfig = {
   },
 }
 
+const mongo = require("mongodb");
+const assert = require("assert");
+const url = 'mongodb://localhost:27017';
+
 function connect() {
-  const {MongoClient} = require('mongodb');
-
-  const url = 'mongodb://localhost:27017';
-
   const client = new MongoClient(url, {useUnifiedTopology: true});
   client.connect(function(err, client){
     var db = client.db("stocks");
