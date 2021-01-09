@@ -1,5 +1,7 @@
 import {useState} from 'react'
 import { Container } from '@material-ui/core'
+import MomentUtils from '@date-io/moment';
+import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 
 /* Page Components */
 import Header from './components/Header';
@@ -13,7 +15,7 @@ import Error from './components/Pages/Error'
 
 /* Config file for page routings */
 const pageConfig = {
-  default: "Login",
+  default: "Transactions",
   error: "Error",
   ref: {
       "Login": Login,
@@ -24,21 +26,9 @@ const pageConfig = {
   },
 }
 
-const mongo = require("mongodb");
-const assert = require("assert");
-const url = 'mongodb://localhost:27017';
-
-function connect() {
-  const client = new MongoClient(url, {useUnifiedTopology: true});
-  client.connect(function(err, client){
-    var db = client.db("stocks");
-  })
-}
-
 export default function App() {
   
   const[currentPage, setCurrentPage] = useState(pageConfig.default)
-  connect();
   console.log("App: rendering " + currentPage);
 
   var Body = pageConfig.ref[pageConfig.error];
@@ -49,8 +39,10 @@ export default function App() {
   return (
 
     <Container maxWidth='lg'>
-        <Header currentPage={currentPage} setCurrentPage={setCurrentPage}/>
-        <Body/>
+        <Header currentPage={currentPage} setCurrentPage={setCurrentPage} pageConfig={pageConfig.ref}/>
+        <MuiPickersUtilsProvider  utils={MomentUtils}>
+          <Body/>
+        </MuiPickersUtilsProvider>
     </Container>
 
   );

@@ -2,11 +2,13 @@
 import { Grid, Paper, makeStyles, Typography } from '@material-ui/core'
 
 const useStyles = makeStyles((theme) => ({
-    root: {
-      flexGrow: 1,
-    },
     paper: {
-        padding: theme.spacing(2),
+        [theme.breakpoints.down('md')]: {
+            padding: theme.spacing(1),
+        },
+        [theme.breakpoints.up('md')]: {
+            padding: theme.spacing(2),
+        },
         textAlign: 'center',
         color: theme.palette.text.secondary,
     },
@@ -40,7 +42,7 @@ function PortfolioCostValue() {
             <Grid item xs={6}>
                 <Paper className={classes.paper}>
                     <Typography variant="h6">
-                        Total Portfolio Cost
+                        Total Cost
                     </Typography>
                     <Typography variant="h3">
                         {formatCurrency(dollar_cost, currency, locale)}
@@ -50,7 +52,7 @@ function PortfolioCostValue() {
             <Grid item xs={6}>
                 <Paper className={classes.paper}>
                     <Typography variant="h6">
-                        Total Portfolio Value
+                        Total Value
                     </Typography>
                     <Typography variant="h3" className={ dollar_value >= dollar_cost ? classes.positive : classes.negative }>
                         {formatCurrency(dollar_value, currency, locale)}

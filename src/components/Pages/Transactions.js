@@ -1,10 +1,15 @@
 
+import NewTransaction from "../Sections/NewTransactions";
+import PastTransactions from "../Sections/PastTransactions";
 
-function Login(){
+function Transactions(){
     return (
-        <h1>Login Here</h1>
+        <div>
+            <NewTransaction/>
+            <PastTransactions/>
+        </div>
     )
 }
 
 
-export default Login;
+export default Transactions;

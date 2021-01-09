@@ -14,9 +14,8 @@ function Header(props) {
     const [menuAnchor, setMenuAnchor] = useState(null);
 
     var pageTitle = "Unknown Page"
-    if(props.currentPage) {
+    if(props.currentPage)
         pageTitle = props.currentPage;
-    }
     console.log("Header: Page title is " + pageTitle);
 
     const handleMenuItemClick = (newPage) => {
@@ -41,9 +40,12 @@ function Header(props) {
                     anchorEl={menuAnchor}
                     onClose={() => setMenuAnchor(null)}
                     >
-                    <MenuItem onClick={(event) => handleMenuItemClick(event.currentTarget.textContent)}>Dashboard</MenuItem>
-                    <MenuItem onClick={(event) => handleMenuItemClick(event.currentTarget.textContent)}>Summary</MenuItem>
-                    <MenuItem onClick={(event) => handleMenuItemClick(event.currentTarget.textContent)}>Transactions</MenuItem>
+                    {
+                        Object.keys(props.pageConfig).map(function(key){
+                            return <MenuItem onClick={() => handleMenuItemClick(key)} key={key}>{key}</MenuItem>
+                        })
+                    }
+
                 </Menu>
             </Toolbar>
         </AppBar>

@@ -2,11 +2,14 @@
 import { Grid, Paper, makeStyles, Typography } from '@material-ui/core'
 
 const useStyles = makeStyles((theme) => ({
-    root: {
-      flexGrow: 1,
-    },
+
     paper: {
-        padding: theme.spacing(2),
+        [theme.breakpoints.down('md')]: {
+            padding: theme.spacing(1),
+        },
+        [theme.breakpoints.up('md')]: {
+            padding: theme.spacing(2),
+        },
         textAlign: 'center',
         color: theme.palette.text.secondary
     },
@@ -15,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
     },
     negative: {
         color: theme.palette.text.negative
-    }
+    },
 }));
 
 function formatCurrency(amount, currency, locale) {
@@ -40,7 +43,7 @@ export default function UnrReaGL() {
             <Grid item xs={4}>
                 <Paper className={classes.paper}>
                     <Typography variant="h6">
-                        Unrealized Gain/Loss
+                        Unr. Gain/Loss
                     </Typography>
                     <Typography variant="h4" className={ dollar_unrealized >= 0 ? classes.positive : classes.negative }>
                         {formatCurrency(dollar_unrealized, currency, locale)}
@@ -50,7 +53,7 @@ export default function UnrReaGL() {
             <Grid item xs={4}>
                 <Paper className={classes.paper}>
                     <Typography variant="h6">
-                        Realized Gain/Loss
+                        Rea. Gain/Loss
                     </Typography>
                     <Typography variant="h4" className={ dollar_realized >= 0 ? classes.positive : classes.negative }>
                         {formatCurrency(dollar_realized, currency, locale)}
