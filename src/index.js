@@ -3,17 +3,17 @@ import ReactDOM from 'react-dom';
 import App from './App';
 
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles'
-import purple from '@material-ui/core/colors/purple';
-import green from '@material-ui/core/colors/green';
+import { pink, red, teal, blue, indigo} from '@material-ui/core/colors';
 
 const theme = createMuiTheme({
   palette: {
     primary: {
-      main: purple[500],
+      main: indigo[400],
     },
     secondary: {
-      main: green[500],
+      main: teal[400],
     },
+    snow: "#F8F8F8",
     text: {
       positive: "green",
       negative: "red",
