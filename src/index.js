@@ -19,9 +19,6 @@ const theme = createMuiTheme({
       negative: "red",
     }
   },
-  submit: {
-    width: 100,
-  }
 });
 
 const rootElement = document.getElementById('root');

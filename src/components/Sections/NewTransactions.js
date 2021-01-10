@@ -36,13 +36,34 @@ const useStyles = makeStyles((theme) => ({
     }
 }))
 
+/* ID Must not be changed and be unique */
+const transTypes = {
+    "Buy": 1000, 
+    "Sell": 1005,
+    "Split": 1010,
+    "Div": 1015,
+    "Fee": 1020,
+};
+
+const axios = require('axios');
+const intriniokey = "OjVmNDQ5NjIwMmNiOTVjOTNkZjI1NTRkY2M1ODE0MGZl";
+
 export default function NewTransaction(){
     const classes = useStyles();
 
     const [transDate, transDateSet] = useState(new Date());
-    const [transType, transTypeSet] = useState()
+    const [transType, transTypeSet] = useState(transTypes["Buy"]);
+    const [transTicker, transTickerSet] = useState("");
     
-    const transTypes = ["Buy", "Sell", "Split", "Div", "Fee"];
+    axios.get("https://api-v2.intrinio.com/securities/AAPL/prices?api_key=" + intriniokey)
+    .then(response => {
+        console.log(response);
+        console.log(response.data.url);
+        console.log(response.data.explanation);
+    })
+    .catch(error => {
+        console.log(error);
+    });
 
     return (
         <Paper className={classes.card}>
@@ -55,12 +76,15 @@ export default function NewTransaction(){
                         </Grid>
                         <Grid item xs={6} sm={3} md={3} lg={1}>
                             <FormControl required className={classes.inputSelector}>
-                                <Select variant="outlined" >
-                                    <MenuItem>Buy</MenuItem>
-                                    <MenuItem>Sell</MenuItem>
-                                    <MenuItem>Split</MenuItem>
-                                    <MenuItem>Div</MenuItem>
-                                    <MenuItem>Fee</MenuItem>
+                                <InputLabel id="label-ticker">Action</InputLabel>
+                                <Select variant="outlined" value={transType} onChange={(e) => transTypeSet(e.target.value)} >
+                                    {
+                                    Object.keys(transTypes).map((trans_name) => {
+                                        const transId = transTypes[trans_name];
+                                        return <MenuItem key={transId} value={transId}>{trans_name}</MenuItem>
+                                    })
+                                    }
+
                                 </Select>
                             </FormControl>
                         </Grid>
@@ -68,7 +92,7 @@ export default function NewTransaction(){
                         <Grid item xs={6} sm={3} md={3} lg={1}>
                             <FormControl required className={classes.inputSelector}>
                                 <InputLabel id="label-ticker">Ticker</InputLabel>
-                                <Select labelId="label-ticker" variant="outlined">
+                                <Select labelId="label-ticker" variant="outlined" value={transTicker} onChange={(e) => transTickerSet(e.target.value)}>
                                     <MenuItem>MRNA</MenuItem>
                                     <MenuItem>AAPL</MenuItem>
                                     <MenuItem>TSLA</MenuItem>

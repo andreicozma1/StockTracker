@@ -12,15 +12,17 @@ import Dashboard from './components/Pages/Dashboard'
 import Transactions from './components/Pages/Transactions'
 import Stock from './components/Pages/Stock'
 import Error from './components/Pages/Error'
+import Discover from './components/Pages/Discover';
 
 /* Config file for page routings */
 const pageConfig = {
-  default: "Transactions",
+  default: "Discover",
   error: "Error",
   ref: {
       "Login": Login,
       "Dashboard": Dashboard,
       "Transactions": Transactions,
+      "Discover": Discover,
       "Stock": Stock,
       "Error": Error,
   },
