@@ -3,7 +3,7 @@ import UnrReaGL from '../Dashes/UnrReaGL'
 function Stock() {
     return (
         <div>
-            <UnrReaGL/>
+            <UnrReaGL />
         </div>
     );
 }

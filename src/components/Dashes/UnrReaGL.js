@@ -33,7 +33,7 @@ export default function UnrReaGL() {
 
     const locale = 'en-US';
     const currency = "USD";
-    
+
     const dollar_unrealized = 1000;
     const dollar_realized = -2500;
     const dollar_total = dollar_unrealized + dollar_realized;
@@ -45,7 +45,7 @@ export default function UnrReaGL() {
                     <Typography variant="h6">
                         Unr. Gain/Loss
                     </Typography>
-                    <Typography variant="h4" className={ dollar_unrealized >= 0 ? classes.positive : classes.negative }>
+                    <Typography variant="h4" className={dollar_unrealized >= 0 ? classes.positive : classes.negative}>
                         {formatCurrency(dollar_unrealized, currency, locale)}
                     </Typography>
                 </Paper>
@@ -55,7 +55,7 @@ export default function UnrReaGL() {
                     <Typography variant="h6">
                         Rea. Gain/Loss
                     </Typography>
-                    <Typography variant="h4" className={ dollar_realized >= 0 ? classes.positive : classes.negative }>
+                    <Typography variant="h4" className={dollar_realized >= 0 ? classes.positive : classes.negative}>
                         {formatCurrency(dollar_realized, currency, locale)}
                     </Typography>
                 </Paper>
@@ -65,7 +65,7 @@ export default function UnrReaGL() {
                     <Typography variant="h6">
                         Total Gain/Loss
                     </Typography>
-                    <Typography variant="h4" className={ dollar_total >= 0 ? classes.positive : classes.negative }>
+                    <Typography variant="h4" className={dollar_total >= 0 ? classes.positive : classes.negative}>
                         {formatCurrency(dollar_total, currency, locale)}
                     </Typography>
                 </Paper>

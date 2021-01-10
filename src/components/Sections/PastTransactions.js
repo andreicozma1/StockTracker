@@ -1,12 +1,12 @@
 
-import {makeStyles, Paper, TableContainer, TableHead, Table, TableBody, TableRow, TableCell, Typography} from "@material-ui/core"
+import { makeStyles, Paper, TableContainer, TableHead, Table, TableBody, TableRow, TableCell, Typography } from "@material-ui/core"
 
 const useStyles = makeStyles((theme) => ({
     root: {
         padding: theme.spacing(2),
         justifyContents: "center",
 
-        
+
     },
     inputDatePicker: {
         minWidth: 100,
@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
         padding: theme.spacing(2),
         marginTop: theme.spacing(1)
     },
-    
+
     transactionForm: {
         margin: theme.spacing(2, 0, 1),
         '& .MuiTextField-root': {
@@ -52,10 +52,10 @@ const rows = [
     createData('Marshmallow', 318, 0, 81, 2.0),
     createData('Nougat', 360, 19.0, 9, 37.0),
     createData('Oreo', 437, 18.0, 63, 4.0),
-  ];
+];
 
 
-export default function PastTransactions(){
+export default function PastTransactions() {
     const classes = useStyles();
 
     return (

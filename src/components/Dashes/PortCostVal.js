@@ -54,7 +54,7 @@ function PortfolioCostValue() {
                     <Typography variant="h6">
                         Total Value
                     </Typography>
-                    <Typography variant="h3" className={ dollar_value >= dollar_cost ? classes.positive : classes.negative }>
+                    <Typography variant="h3" className={dollar_value >= dollar_cost ? classes.positive : classes.negative}>
                         {formatCurrency(dollar_value, currency, locale)}
                     </Typography>
                 </Paper>

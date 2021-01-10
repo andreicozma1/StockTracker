@@ -4,8 +4,8 @@ import UnrReaGL from '../Dashes/UnrReaGL'
 function Dashboard() {
     return (
         <div>
-            <PortCostVal/>
-            <UnrReaGL/>
+            <PortCostVal />
+            <UnrReaGL />
         </div>
     );
 }

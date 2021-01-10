@@ -1,11 +1,8 @@
 import { useState } from "react"
 import { Autocomplete } from "@material-ui/lab"
 import MuiAlert from '@material-ui/lab/Alert';
-import clsx from 'clsx';
-import { Delete, ExpandMore, Phone, Public } from "@material-ui/icons"
-import { TextField, Typography, Card, CardContent, Grid, makeStyles, Avatar, Snackbar, LinearProgress, CardHeader, IconButton, CardActions, Collapse } from "@material-ui/core";
-import Peers from "../Sections/Peers";
-import StockCard from "../Dashes/StockCard";
+import { TextField, makeStyles, Snackbar, LinearProgress, Grid } from "@material-ui/core";
+import StockCard from "../Sections/StockCard";
 const axios = require("axios");
 const finnhubkey = "bvt0qjf48v6rku8bl5u0";
 
@@ -14,12 +11,6 @@ function Alert(props) {
 }
 
 const useStyles = makeStyles((theme) => ({
-    root: {
-        [theme.breakpoints.up('md')]: {
-            maxWidth: "50%"
-        },
-    },
-
     margin: {
         margin: theme.spacing(1, 0),
     },
@@ -127,14 +118,14 @@ export default function Discover() {
                 console.log(result);
                 var profile = result.data;
 
-                if(cards.hasOwnProperty(profile.ticker)){
+                if (cards.hasOwnProperty(profile.ticker)) {
                     setShowSnackbar({
                         severity: "warning",
                         message: "Warning! Global market not supported. Profile returned the same result as " + cards[profile.ticker].ticker
                     })
 
                     setAutocompleteValues(autocompleteValues.filter(item => item.symbol !== stock.symbol));
-                    
+
                     return;
                 }
 
@@ -209,7 +200,7 @@ export default function Discover() {
 
     const handleCardClose = (ticker) => {
         console.log("Deleting card " + ticker);
-        const new_cards = {...cards};
+        const new_cards = { ...cards };
         delete new_cards[ticker]
         setCards(new_cards);
         setAutocompleteValues(autocompleteValues.filter(item => item.symbol !== ticker));
@@ -220,7 +211,7 @@ export default function Discover() {
     return (
         <div>
             {
-                autocompleteValues.length != Object.keys(cards).length && <LinearProgress color="secondary" />
+                autocompleteValues.length !== Object.keys(cards).length && <LinearProgress color="secondary" />
             }
 
             <Autocomplete className={classes.margin}
@@ -236,14 +227,18 @@ export default function Discover() {
                 renderInput={(params) => <TextField {...params} onChange={handleChange} label="Stock Search" variant="outlined" />}
             >
             </Autocomplete>
+            <Grid container spacing={1} >
+                {
+                    Object.values(cards).map((card) => {
+                        console.log("Rendering");
+                        console.log(card);
+                        return <Grid item md={6}>
+                            <StockCard key={card.country + "-" + card.currency + "-" + card.ticker} info={card} onClose={() => handleCardClose(card.ticker)} />
+                        </Grid>
+                    })
+                }
+            </Grid>
 
-            {
-                Object.values(cards).map((card) => {
-                    console.log("Rendering");
-                    console.log(card);
-                    return <StockCard key={card.country + "-" + card.currency + "-" + card.ticker} info={card} onClose={() => handleCardClose(card.ticker)} />
-                })
-            }
 
             <Snackbar open={showSnackBar.message !== ""} autoHideDuration={6000} onClose={handleCloseSnackbar}>
                 <Alert onClose={handleCloseSnackbar} severity={showSnackBar.severity}>

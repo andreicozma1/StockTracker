@@ -2,11 +2,16 @@
 import NewTransaction from "../Sections/NewTransactions";
 import PastTransactions from "../Sections/PastTransactions";
 
-function Transactions(){
+function Transactions() {
+
+    const handleAddTrans = (transaction) => {
+        console.log(transaction);
+    }
+
     return (
         <div>
-            <NewTransaction/>
-            <PastTransactions/>
+            <NewTransaction onClick={handleAddTrans} />
+            <PastTransactions />
         </div>
     )
 }

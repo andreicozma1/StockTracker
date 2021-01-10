@@ -54,7 +54,7 @@ export default function Peers(props) {
         if (ticker === props.ticker)
             return null
 
-        return <Grid item xs={2} key={ticker}>
+        return <Grid item xs={4} lg={3} key={ticker}>
             <Button variant="outlined" color="secondary" className={classes.retryButton}>{ticker}</Button>
         </Grid>
     }
@@ -63,7 +63,7 @@ export default function Peers(props) {
         <Grid container justify="space-around" alignItems="center">
 
             <Grid item xs={2}>
-                <Typography variant="h6">Peers</Typography>
+                <Typography variant="subtitle2">PEERS</Typography>
             </Grid>
             <Grid container item xs={10} spacing={1} className={classes.root} justify="flex-end" alignItems="center">
                 {

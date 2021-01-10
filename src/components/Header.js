@@ -1,6 +1,6 @@
 import { AppBar, IconButton, makeStyles, Menu, MenuItem, Toolbar, Typography } from '@material-ui/core';
-import {useState} from 'react'
-import {MoreVert} from '@material-ui/icons'
+import { useState } from 'react'
+import { MoreVert } from '@material-ui/icons'
 
 const useStyles = makeStyles((theme) => ({
     title: {
@@ -14,7 +14,7 @@ function Header(props) {
     const [menuAnchor, setMenuAnchor] = useState(null);
 
     var pageTitle = "Unknown Page"
-    if(props.currentPage)
+    if (props.currentPage)
         pageTitle = props.currentPage;
     console.log("Header: Page title is " + pageTitle);
 
@@ -31,7 +31,7 @@ function Header(props) {
                 </Typography>
 
                 <IconButton onClick={(e) => setMenuAnchor(e.currentTarget)} edge="end" color="inherit" aria-controls="popup-menu" aria-haspopup="true">
-                    <MoreVert/>
+                    <MoreVert />
                 </IconButton>
                 <Menu
                     id="popup-menu"
@@ -39,9 +39,9 @@ function Header(props) {
                     open={Boolean(menuAnchor)}
                     anchorEl={menuAnchor}
                     onClose={() => setMenuAnchor(null)}
-                    >
+                >
                     {
-                        Object.keys(props.pageConfig).map(function(key){
+                        Object.keys(props.pageConfig).map(function (key) {
                             return <MenuItem onClick={() => handleMenuItemClick(key)} key={key}>{key}</MenuItem>
                         })
                     }

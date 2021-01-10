@@ -1,14 +1,14 @@
 
-import {TextField, makeStyles, Grid, Paper, Button} from "@material-ui/core"
-import {useState} from "react"
+import { TextField, makeStyles, Grid, Paper, Button } from "@material-ui/core"
+import { useState } from "react"
 
 const useStyles = makeStyles((theme) => ({
     root: {
         margin: theme.spacing(2),
         padding: theme.spacing(1),
         '& .MuiTextField-root': {
-          margin: theme.spacing(1),
-          width: 300,
+            margin: theme.spacing(1),
+            width: 300,
         },
     },
     submit: {
@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 
-export default function Login(){
+export default function Login() {
 
     const classes = useStyles();
 
@@ -127,21 +127,21 @@ export default function Login(){
         var errors = [];
         var errortxt = "";
 
-        if(text.length < input.validation.min || text.length > input.validation.max) 
+        if (text.length < input.validation.min || text.length > input.validation.max)
             errortxt = "Length must be between " + input.validation.min + " and " + input.validation.max + ".\n";
-        if(!input.validation.letters && regExpLetters.test(text))
+        if (!input.validation.letters && regExpLetters.test(text))
             errors.push("Letters");
-        if(!input.validation.numbers && regExpNumbers.test(text))
+        if (!input.validation.numbers && regExpNumbers.test(text))
             errors.push("Numbers");
-        if(text.split(" ").length > 1) 
+        if (text.split(" ").length > 1)
             errors.push("Spaces");
-        
-        if(errors.length > 0) {
+
+        if (errors.length > 0) {
             errortxt = errortxt.concat(errors[0]);
             var delimiter = errors.length === 2 ? " and " : ", ";
 
             for (var i = 1; i < errors.length; i++) {
-                if(errors.length > 2 && i === errors.length - 1)
+                if (errors.length > 2 && i === errors.length - 1)
                     delimiter = ", and "
 
                 errortxt = errortxt.concat(delimiter).concat(errors[i].toLowerCase());
@@ -149,23 +149,23 @@ export default function Login(){
             errortxt = errortxt.concat(" not allowed.");
         }
         input.props.setError(errortxt);
-        
-        if(errortxt === "") {
+
+        if (errortxt === "") {
             var disableSubmit = false;
-            for(var element_id in form_fields) {
-                if(element_id !== id && (form_fields[element_id].props.getError !== "" || form_fields[element_id].props.get.length <= 1))
+            for (var element_id in form_fields) {
+                if (element_id !== id && (form_fields[element_id].props.getError !== "" || form_fields[element_id].props.get.length <= 1))
                     disableSubmit = true;
             }
             setSubmitDisable(disableSubmit);
         } else {
             setSubmitDisable(true);
         }
-    
+
         input.props.set(text)
     }
 
     const handleSubmit = (e) => {
-        
+
     }
 
     return (
@@ -173,13 +173,13 @@ export default function Login(){
             <form noValidate autoComplete="off">
                 <Grid container direction="column" alignItems="center">
                     {
-                    Object.keys(form_fields).map(function(id) {
-                        const input = form_fields[id];
-                        const FieldType = input.type;
-                        const properties = input.props;
+                        Object.keys(form_fields).map(function (id) {
+                            const input = form_fields[id];
+                            const FieldType = input.type;
+                            const properties = input.props;
 
-                        return <FieldType key={id} id={id} label={id} error={properties.getError ? true : false} helperText={properties.getError} required={properties.required} variant={properties.variant} value={properties.get} onChange={validate}/>
-                    })
+                            return <FieldType key={id} id={id} label={id} error={properties.getError ? true : false} helperText={properties.getError} required={properties.required} variant={properties.variant} value={properties.get} onChange={validate} />
+                        })
                     }
                     <Button className={classes.submit} disabled={submitDisable} onClick={handleSubmit} variant="contained" color="secondary" size="medium">Login</Button>
                 </Grid>

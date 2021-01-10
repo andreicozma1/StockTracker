@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import App from './App';
 
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles'
-import { pink, red, teal, blue, indigo} from '@material-ui/core/colors';
+import { teal, indigo } from '@material-ui/core/colors';
 
 const theme = createMuiTheme({
   palette: {
@@ -27,7 +27,7 @@ const rootElement = document.getElementById('root');
 ReactDOM.render(
   <React.StrictMode>
     <ThemeProvider theme={theme}>
-      <App/>
+      <App />
     </ThemeProvider>
   </React.StrictMode>,
   rootElement
