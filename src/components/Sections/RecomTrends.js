@@ -1,10 +1,8 @@
 
-import { Grid, makeStyles, Button, CircularProgress, Typography, TableContainer, TableRow, TableCell, Table, TableHead, TableBody } from "@material-ui/core";
+import { Grid, makeStyles, Button, CircularProgress, Typography } from "@material-ui/core";
 import { DataGrid } from '@material-ui/data-grid';
 import { useState } from "react";
 const axios = require("axios");
-const finnhubkey = "bvt0qjf48v6rku8bl5u0";
-
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -16,23 +14,24 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 const columns = [
-    { 
+    {
         field: 'period',
-        headerName: 'Period', 
+        headerName: 'Period',
         type: 'date',
-        width: 110 
+        width: 110
     },
-    { 
-        field: 'strongBuy', 
-        headerName: 'BUY', 
+    {
+        field: 'strongBuy',
+        headerName: 'BUY',
         type: 'number',
         width: 75
     },
-    { 
-        field: 'buy', 
-        headerName: 'Buy', 
+    {
+        field: 'buy',
+        headerName: 'Buy',
         type: 'number',
-        width: 75 },
+        width: 75
+    },
     {
         field: 'hold',
         headerName: 'Hold',
@@ -65,7 +64,7 @@ export default function RecomTrends(props) {
             axios.get('https://finnhub.io/api/v1/stock/recommendation', {
                 params: {
                     symbol: props.ticker,
-                    token: finnhubkey
+                    token: process.env.REACT_APP_FINNHUB_KEY
                 }
             }).then(result => {
                 console.log(result.data)
@@ -99,7 +98,7 @@ export default function RecomTrends(props) {
                 </Button>
             </Grid>
         </Grid> : <div className={classes.root}>
-                <DataGrid id="period" rows={peers} columns={columns} autoPageSize showCellRightBorder disableColumnMenu scrollbarSize="20" rowHeight={30}/>
+                <DataGrid rows={peers} columns={columns} autoPageSize showCellRightBorder disableColumnMenu scrollbarSize="20" rowHeight={30} />
             </div>
     )
 }

@@ -12,8 +12,8 @@ const theme = createMuiTheme({
     },
     secondary: {
       main: teal[400],
+      snow: "#F8F8F8",
     },
-    snow: "#F8F8F8",
     text: {
       positive: "green",
       negative: "red",

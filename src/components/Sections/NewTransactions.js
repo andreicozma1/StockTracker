@@ -2,6 +2,7 @@
 import { TextField, makeStyles, Grid, Paper, Button, MenuItem, Select, FormControl, InputLabel, Typography } from "@material-ui/core"
 import { useState } from "react"
 import { DateTimePicker } from "@material-ui/pickers";
+import SearchStocks from "./SearchStocks";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -17,7 +18,9 @@ const useStyles = makeStyles((theme) => ({
         width: "100%"
     },
     inputSubmit: {
-        width: 200,
+        width: "100%",
+        textAlign: "center",
+        margin: theme.spacing(2, 0)
     },
 
     card: {
@@ -34,25 +37,32 @@ const useStyles = makeStyles((theme) => ({
     }
 }))
 
-/* ID Must not be changed and be unique */
-const transTypes = {
-    "Buy": 1000,
-    "Sell": 1005,
-    "Split": 1010,
-    "Div": 1015,
-    "Fee": 1020,
-};
 
-export default function NewTransaction(props) {
+export default function NewTransaction({ onClick, transTypes }) {
     const classes = useStyles();
 
     const [transDate, transDateSet] = useState(new Date());
     const [transType, transTypeSet] = useState(transTypes["Buy"]);
-    const [transTicker, transTickerSet] = useState("");
+    const [transTicker, transTickerSet] = useState(null);
     const [transUnits, transUnitsSet] = useState("");
     const [transPrice, transPriceSet] = useState("");
     const [transFees, transFeesSet] = useState("");
     const [transSplit, transSplitSet] = useState("");
+
+
+    const handleSubmit = () => {
+        const id = transDate.getFullYear() + "-" + (transDate.getMonth() + 1) + "-" + transDate.getHours() + "-" + transDate.getMinutes() + "-" + transType + "-" + transTicker.symbol + "-" + transUnits + "-" + transPrice + "-" + transFees + "-" + transSplit;
+        onClick({
+            id: id,
+            date: transDate,
+            type: transType,
+            ticker: transTicker.symbol,
+            units: transUnits,
+            price: transPrice,
+            fees: transFees,
+            split: transSplit
+        });
+    }
 
     return (
         <Paper className={classes.card}>
@@ -63,7 +73,12 @@ export default function NewTransaction(props) {
                     <Grid item xs={12} sm={6} md={4} lg={2}>
                         <DateTimePicker className={classes.inputDatePicker} label="Date" inputVariant="outlined" value={transDate} onChange={transDateSet} />
                     </Grid>
-                    <Grid item xs={6} sm={3} md={3} lg={1}>
+
+                    <Grid item xs={8} sm={4} md={4} lg={3}>
+                        <SearchStocks onChange={(event, value) => transTickerSet(value)} value={transTicker} />
+                    </Grid>
+
+                    <Grid item xs={4} sm={2} md={3} lg={2}>
                         <FormControl required className={classes.inputSelector}>
                             <InputLabel id="label-ticker">Action</InputLabel>
                             <Select variant="outlined" value={transType} onChange={(e) => transTypeSet(e.target.value)} >
@@ -77,40 +92,26 @@ export default function NewTransaction(props) {
                         </FormControl>
                     </Grid>
 
-                    <Grid item xs={6} sm={3} md={3} lg={1}>
-                        <FormControl required className={classes.inputSelector}>
-                            <InputLabel id="label-ticker">Ticker</InputLabel>
-                            <Select labelId="label-ticker" variant="outlined" value={transTicker} onChange={(e) => transTickerSet(e.target.value)}>
-                                <MenuItem>MRNA</MenuItem>
-                                <MenuItem>AAPL</MenuItem>
-                                <MenuItem>TSLA</MenuItem>
-                                <MenuItem>AMZN</MenuItem>
-                                <MenuItem>NIO</MenuItem>
-                            </Select>
-                        </FormControl>
+                    <Grid item xs={6} sm={3} md={3} lg={2}>
+                        <TextField required label="Transacted Units" type="number" variant="outlined" value={transUnits} onChange={(e) => transUnitsSet(e.target.value)} />
                     </Grid>
 
-
-                    <Grid item xs={12} sm={6} md={3} lg={2}>
-                        <TextField required label="Transacted Units" type="number" variant="outlined" value={transUnits} onChange={(e) => transUnitsSet(e.target.value)}/>
+                    <Grid item xs={6} sm={3} md={3} lg={2}>
+                        <TextField required label="Transacted Price" type="number" variant="outlined" value={transPrice} onChange={(e) => transPriceSet(e.target.value)} />
                     </Grid>
 
-                    <Grid item xs={12} sm={6} md={3} lg={2}>
-                        <TextField required label="Transacted Price" type="number" variant="outlined" value={transPrice} onChange={(e) => transPriceSet(e.target.value)}/>
-                    </Grid>
-
-                    <Grid item xs={12} sm={6} md={3} lg={2}>
+                    <Grid item xs={6} sm={3} md={3} lg={2}>
                         <TextField required label="Fees" type="number" variant="outlined" value={transFees} onChange={(e) => transFeesSet(e.target.value)} />
                     </Grid>
-                    <Grid item xs={12} sm={6} md={3} lg={2}>
-                        <TextField required label="Stock Split Ratio" type="number" variant="outlined" value={transSplit} onChange={(e) => transSplitSet(e.target.value)}/>
-                    </Grid>
-
-                    <Grid item>
-                        <Button className={classes.inputSubmit} variant="contained" color="secondary" onClick={props.onClick}>Add Transaction</Button>
+                    <Grid item xs={6} sm={3} md={3} lg={2}>
+                        <TextField required label="Stock Split Ratio" type="number" variant="outlined" value={transSplit} onChange={(e) => transSplitSet(e.target.value)} />
                     </Grid>
 
                 </Grid>
+                <div className={classes.inputSubmit}>
+                    <Button variant="contained" color="secondary" onClick={handleSubmit}>Add Transaction</Button>
+                </div>
+
             </form>
         </Paper>
     )

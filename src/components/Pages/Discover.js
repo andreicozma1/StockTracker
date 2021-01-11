@@ -1,10 +1,9 @@
 import { useState } from "react"
-import { Autocomplete } from "@material-ui/lab"
 import MuiAlert from '@material-ui/lab/Alert';
-import { TextField, makeStyles, Snackbar, LinearProgress, Grid } from "@material-ui/core";
+import { makeStyles, Snackbar, LinearProgress, Grid } from "@material-ui/core";
 import StockCard from "../Sections/StockCard";
+import SearchStocks from "../Sections/SearchStocks";
 const axios = require("axios");
-const finnhubkey = "bvt0qjf48v6rku8bl5u0";
 
 function Alert(props) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -15,14 +14,6 @@ const useStyles = makeStyles((theme) => ({
         margin: theme.spacing(1, 0),
     },
 }))
-
-function compare(a, b) {
-    if (a.description < b.description)
-        return -1;
-    if (a.description > b.description)
-        return 1;
-    return 0;
-}
 
 function logError(error) {
     if (error.response) {
@@ -44,7 +35,6 @@ export default function Discover() {
 
     const classes = useStyles()
     const [autocompleteValues, setAutocompleteValues] = useState([])
-    const [stockList, stockListSet] = useState([])
     const [cards, setCards] = useState({});
     const [showSnackBar, setShowSnackbar] = useState({
         severity: "info",
@@ -56,33 +46,13 @@ export default function Discover() {
         if (reason === 'clickaway') {
             return;
         }
-        setShowSnackbar("");
+        setShowSnackbar({
+            severity: "info",
+            message: ""
+        });
     };
 
-    const handleChange = async function (e) {
-        const text = e.target.value;
-
-        console.log("Searching for " + text);
-        axios.get('https://finnhub.io/api/v1/search', {
-            params: {
-                q: encodeURIComponent(text),
-                token: finnhubkey
-            }
-        }).then(resp => {
-            const result_arr = autocompleteValues.concat(resp.data.result)
-            result_arr.sort(compare)
-            console.log("Got result of length " + result_arr.length)
-            stockListSet(result_arr);
-        }).catch(error => {
-            logError(error);
-            setShowSnackbar({
-                severity: "warning",
-                message: "Warning! Some search results failed to fetch."
-            })
-        })
-    }
-
-    const onSelect = async function (selected_arr) {
+    const onSelect = async function (event, selected_arr) {
         console.log("Selected")
         console.log(selected_arr);
 
@@ -91,8 +61,8 @@ export default function Discover() {
         var new_cards = {};
         if (selected_arr.length < Object.keys(cards).length) {
             console.log(cards);
-            for (var index in selected_arr) {
-                const stock = selected_arr[index];
+            for (var stock_index in selected_arr) {
+                const stock = selected_arr[stock_index];
                 if (cards.hasOwnProperty(stock.symbol))
                     new_cards[stock.symbol] = cards[stock.symbol];
             }
@@ -111,7 +81,7 @@ export default function Discover() {
             axios.get('https://finnhub.io/api/v1/stock/profile2', {
                 params: {
                     symbol: encodeURIComponent(stock.symbol),
-                    token: finnhubkey
+                    token: process.env.REACT_APP_FINNHUB_KEY
                 }
             }).then(result => {
                 console.log("Got profile for " + stock.symbol)
@@ -133,7 +103,7 @@ export default function Discover() {
                 axios.get('https://finnhub.io/api/v1/quote', {
                     params: {
                         symbol: encodeURIComponent(profile.ticker),
-                        token: finnhubkey
+                        token: process.env.REACT_APP_FINNHUB_KEY
                     }
                 }).then(result => {
                     // On success
@@ -154,7 +124,7 @@ export default function Discover() {
                     axios.get('https://finnhub.io/api/v1/quote', {
                         params: {
                             symbol: encodeURIComponent(profile.ticker),
-                            token: finnhubkey
+                            token: process.env.REACT_APP_FINNHUB_KEY
                         }
                     }).then(result => {
                         setShowSnackbar({
@@ -213,38 +183,31 @@ export default function Discover() {
             {
                 autocompleteValues.length !== Object.keys(cards).length && <LinearProgress color="secondary" />
             }
+            <div className={classes.margin}>
+                <SearchStocks onChange={onSelect} value={autocompleteValues} multiple />
+            </div>
 
-            <Autocomplete className={classes.margin}
-                multiple
-                filterSelectedOptions
-                clearOnEscape
-                options={stockList}
-                groupBy={(option) => option.description}
-                getOptionLabel={(option) => option.displaySymbol + "  -  " + option.description}
-                loading={stockList.length === 0}
-                value={autocompleteValues}
-                onChange={(event, selected_arr) => onSelect(selected_arr)}
-                renderInput={(params) => <TextField {...params} onChange={handleChange} label="Stock Search" variant="outlined" />}
-            >
-            </Autocomplete>
             <Grid container spacing={1} >
                 {
                     Object.values(cards).map((card) => {
                         console.log("Rendering");
                         console.log(card);
-                        return <Grid item md={6}>
-                            <StockCard key={card.country + "-" + card.currency + "-" + card.ticker} info={card} onClose={() => handleCardClose(card.ticker)} />
+                        return <Grid item md={6} key={card.country + "-" + card.currency + "-" + card.ticker} >
+                            <StockCard info={card} onClose={() => handleCardClose(card.ticker)} />
                         </Grid>
                     })
                 }
             </Grid>
 
+            {
+                showSnackBar.message !== "" &&
+                <Snackbar open={showSnackBar.message !== ""} autoHideDuration={6000} onClose={handleCloseSnackbar}>
+                    <Alert onClose={handleCloseSnackbar} severity={showSnackBar.severity}>
+                        {showSnackBar.message}
+                    </Alert>
+                </Snackbar>
+            }
 
-            <Snackbar open={showSnackBar.message !== ""} autoHideDuration={6000} onClose={handleCloseSnackbar}>
-                <Alert onClose={handleCloseSnackbar} severity={showSnackBar.severity}>
-                    {showSnackBar.message}
-                </Alert>
-            </Snackbar>
         </div>
     )
 }

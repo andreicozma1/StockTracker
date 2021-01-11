@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
         fontWeight: "bold"
     },
     collapseStyle: {
-        backgroundColor: theme.palette.snow
+        backgroundColor: theme.palette.secondary.snow
     },
     alignRight: {
         textAlign: "right"
@@ -39,10 +39,10 @@ const useStyles = makeStyles((theme) => ({
 
 }))
 
-function formatCurrency(amount, currency) {
+function formatCurrency(amount) {
     return (amount).toLocaleString("en-US", {
         style: 'currency',
-        currency: currency,
+        currency: "USD",
     });
 }
 
@@ -81,7 +81,7 @@ export default function StockCard(props) {
                 <Grid container spacing={3} justify="space-between" alignItems="center">
 
                     <Grid item xs={6}>
-                        <Typography variant="h4" className={classes.currentPriceStyle}>{card.quote.c ? formatCurrency(card.quote.c, card.currency) : "N/A"}</Typography>
+                        <Typography variant="h4" className={classes.currentPriceStyle}>{card.quote.c ? formatCurrency(card.quote.c) : "N/A"}</Typography>
                     </Grid>
 
                     <Grid item xs={6}>
@@ -93,7 +93,7 @@ export default function StockCard(props) {
                             <Typography variant="subtitle1">Prev Close {card.quote.hasOwnProperty("backup") ? card.country : ""}</Typography>
                         </Grid>
                         <Grid item>
-                            <Typography variant="h6" color="secondary">{card.quote.pc ? formatCurrency(card.quote.pc, card.currency) : "N/A"}</Typography>
+                            <Typography variant="h6" color="secondary">{card.quote.pc ? formatCurrency(card.quote.pc) : "N/A"}</Typography>
                         </Grid>
                     </Grid>
 
@@ -102,7 +102,7 @@ export default function StockCard(props) {
                             <Typography variant="subtitle1">Day Open {card.quote.hasOwnProperty("backup") ? card.country : ""}</Typography>
                         </Grid>
                         <Grid item>
-                            <Typography variant="h6" color="secondary">{card.quote.o ? formatCurrency(card.quote.o, card.currency) : "N/A"}</Typography>
+                            <Typography variant="h6" color="secondary">{card.quote.o ? formatCurrency(card.quote.o) : "N/A"}</Typography>
                         </Grid>
                     </Grid>
 
@@ -111,7 +111,7 @@ export default function StockCard(props) {
                             <Typography variant="subtitle1">High today {card.quote.hasOwnProperty("backup") ? card.country : ""}</Typography>
                         </Grid>
                         <Grid item>
-                            <Typography variant="h6" color="secondary">{card.quote.h ? formatCurrency(card.quote.h, card.currency) : "N/A"}</Typography>
+                            <Typography variant="h6" color="secondary">{card.quote.h ? formatCurrency(card.quote.h) : "N/A"}</Typography>
                         </Grid>
                     </Grid>
 
@@ -120,7 +120,7 @@ export default function StockCard(props) {
                             <Typography variant="subtitle1">Low Today {card.quote.hasOwnProperty("backup") ? card.country : ""}</Typography>
                         </Grid>
                         <Grid item>
-                            <Typography variant="h6" color="secondary">{card.quote.l ? formatCurrency(card.quote.l, card.currency) : "N/A"}</Typography>
+                            <Typography variant="h6" color="secondary">{card.quote.l ? formatCurrency(card.quote.l) : "N/A"}</Typography>
                         </Grid>
                     </Grid>
 
