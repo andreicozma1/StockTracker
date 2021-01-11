@@ -31,6 +31,8 @@ function logError(error) {
     }
 }
 
+var timer = null;
+
 export default function SearchStocks(props) {
     const [stockList, stockListSet] = useState([])
     const [showSnackBar, setShowSnackbar] = useState({
@@ -51,24 +53,34 @@ export default function SearchStocks(props) {
     const handleChange = async function (e) {
         const text = e.target.value;
 
-        console.log("Searching for " + text);
-        axios.get('https://finnhub.io/api/v1/search', {
-            params: {
-                q: encodeURIComponent(text),
-                token: process.env.REACT_APP_FINNHUB_KEY
-            }
-        }).then(resp => {
-            const result_arr = resp.data.result;
-            result_arr.sort(compare)
-            console.log("Got result of length " + result_arr.length)
-            stockListSet(result_arr);
-        }).catch(error => {
-            logError(error);
-            setShowSnackbar({
-                severity: "error",
-                message: error.message
+        if (timer) {
+            console.error("timer started");
+            clearTimeout(timer);
+            timer = null;
+        }
+        stockListSet([])
+        timer = setTimeout(function () {
+            console.log("Searching for " + text);
+            axios.get('https://finnhub.io/api/v1/search', {
+                params: {
+                    q: encodeURIComponent(text),
+                    token: process.env.REACT_APP_FINNHUB_KEY
+                }
+            }).then(resp => {
+                const result_arr = resp.data.result;
+                result_arr.sort(compare)
+                console.log("Got result of length " + result_arr.length)
+                stockListSet(result_arr);
+            }).catch(error => {
+                logError(error);
+                setShowSnackbar({
+                    severity: "error",
+                    message: error.message
+                })
             })
-        })
+        }, 500);
+
+
     }
 
 
@@ -82,7 +94,7 @@ export default function SearchStocks(props) {
                 options={stockList}
                 groupBy={(option) => option.description}
                 getOptionLabel={(option) => option.displaySymbol + "  -  " + option.description}
-                loading={stockList.length === 0}
+                loading={stockList.length === 0 || timer !== null}
                 renderInput={(params) => <TextField {...params} onChange={handleChange} label="Stock Search" variant="outlined" />}
             >
             </Autocomplete>
