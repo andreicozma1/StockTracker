@@ -16,7 +16,7 @@ import Discover from './components/Pages/Discover';
 
 /* Config file for page routings */
 const pageConfig = {
-  default: "Discover",
+  default: "Transactions",
   error: "Error",
   ref: {
     "Login": Login,

@@ -3,7 +3,6 @@ import { Grid, makeStyles, Button, CircularProgress, Typography } from "@materia
 import { useState } from "react"
 
 const axios = require("axios");
-const finnhubkey = "bvt0qjf48v6rku8bl5u0";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -28,7 +27,7 @@ export default function Peers(props) {
             axios.get('https://finnhub.io/api/v1/stock/peers', {
                 params: {
                     symbol: props.ticker,
-                    token: finnhubkey
+                    token: process.env.REACT_APP_FINNHUB_KEY
                 }
             }).then(result => {
                 setPeers(result.data)

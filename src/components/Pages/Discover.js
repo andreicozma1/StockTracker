@@ -3,6 +3,8 @@ import MuiAlert from '@material-ui/lab/Alert';
 import { makeStyles, Snackbar, LinearProgress, Grid } from "@material-ui/core";
 import StockCard from "../Sections/StockCard";
 import SearchStocks from "../Sections/SearchStocks";
+import {useStickyState} from "../Utils";
+
 const axios = require("axios");
 
 function Alert(props) {
@@ -34,8 +36,8 @@ export default function Discover() {
     console.log("Discover");
 
     const classes = useStyles()
-    const [autocompleteValues, setAutocompleteValues] = useState([])
-    const [cards, setCards] = useState({});
+    const [autocompleteValues, setAutocompleteValues] = useStickyState([], "autocompleteValues")
+    const [cards, setCards] = useStickyState({}, "cards");
     const [showSnackBar, setShowSnackbar] = useState({
         severity: "info",
         message: ""

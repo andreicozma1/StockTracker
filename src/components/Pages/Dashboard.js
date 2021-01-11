@@ -1,7 +1,7 @@
 import PortCostVal from '../Dashes/PortCostVal'
 import UnrReaGL from '../Dashes/UnrReaGL'
 
-function Dashboard() {
+export function Dashboard() {
     return (
         <div>
             <PortCostVal />

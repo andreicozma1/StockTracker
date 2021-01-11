@@ -3,8 +3,6 @@ import { Grid, makeStyles, Button, CircularProgress, Typography } from "@materia
 import { useState } from "react"
 
 const axios = require("axios");
-const finnhubkey = "bvt0qjf48v6rku8bl5u0";
-
 
 const useStyles = makeStyles((theme) => ({
     retryButton: {
@@ -25,7 +23,7 @@ export default function NewsSentiment(props) {
             axios.get('https://finnhub.io/api/v1/news-sentiment', {
                 params: {
                     symbol: props.ticker,
-                    token: finnhubkey
+                    token: process.env.REACT_APP_FINNHUB_KEY
                 }
             }).then(result => {
                 setPeers(result.data)

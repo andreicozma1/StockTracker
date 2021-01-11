@@ -4,9 +4,12 @@ import NewTransaction from "../Sections/NewTransactions";
 import PastTransactions from "../Sections/PastTransactions";
 import { Snackbar } from "@material-ui/core";
 
+
 function Alert(props) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
+
+
 
 /* ID Must not be changed and be unique */
 const transTypes = {
@@ -34,20 +37,25 @@ function Transactions() {
         });
     };
 
-    const handleAddTrans = (transaction) => {
+    const handleAddTrans = (transaction, bulk) => {
         console.log(transaction);
-        if (transactions.hasOwnProperty(transaction.id)) {
-            console.error("Transaction already exists");
-            setShowSnackbar({
-                severity: "error",
-                message: "Error! Transaction already exists."
-            })
+        if(bulk) {
+            setTransactions(transaction, bulk);
         } else {
-            console.log("Added new transaction!")
-            const new_transactions = { ...transactions };
-            new_transactions[transaction.id] = transaction;
-            setTransactions(new_transactions);
+            if (transactions.hasOwnProperty(transaction.id)) {
+                console.error("Transaction already exists");
+                setShowSnackbar({
+                    severity: "error",
+                    message: "Error! Transaction already exists."
+                })
+            } else {
+                console.log("Added new transaction!")
+                const new_transactions = { ...transactions };
+                new_transactions[transaction.id] = transaction;
+                setTransactions(new_transactions);
+            }
         }
+
     }
 
     return (

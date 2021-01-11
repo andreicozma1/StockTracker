@@ -54,7 +54,7 @@ export default function SearchStocks(props) {
         const text = e.target.value;
 
         if (timer) {
-            console.error("timer started");
+            console.warn("Timing out till user finishes typing.");
             clearTimeout(timer);
             timer = null;
         }
