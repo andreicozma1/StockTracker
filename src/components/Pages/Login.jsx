@@ -1,6 +1,6 @@
 
-import { TextField, makeStyles, Grid, Paper, Button } from "@material-ui/core"
-import { useState } from "react"
+import { Button, Grid, makeStyles, Paper, TextField } from "@material-ui/core";
+import { useState } from "react";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -10,6 +10,7 @@ const useStyles = makeStyles((theme) => ({
             margin: theme.spacing(1),
             width: 300,
         },
+
     },
     submit: {
         margin: theme.spacing(2),
@@ -20,6 +21,7 @@ const useStyles = makeStyles((theme) => ({
 
 
 export default function Login() {
+    console.log("Rendering page Login");
 
     const classes = useStyles();
 

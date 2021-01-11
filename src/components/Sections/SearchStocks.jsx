@@ -1,7 +1,7 @@
-import { useState } from "react"
-import { Autocomplete } from "@material-ui/lab"
+import { Snackbar, TextField } from "@material-ui/core";
+import { Autocomplete } from "@material-ui/lab";
 import MuiAlert from '@material-ui/lab/Alert';
-import { TextField, Snackbar } from "@material-ui/core";
+import { useState } from "react";
 const axios = require("axios");
 
 function Alert(props) {
@@ -50,7 +50,7 @@ export default function SearchStocks(props) {
         });
     };
 
-    const handleChange = async function (e) {
+    const handleChange = function (e) {
         const text = e.target.value;
 
         if (timer) {
@@ -95,7 +95,7 @@ export default function SearchStocks(props) {
                 groupBy={(option) => option.description}
                 getOptionLabel={(option) => option.displaySymbol + "  -  " + option.description}
                 loading={stockList.length === 0 || timer !== null}
-                renderInput={(params) => <TextField {...params} onChange={handleChange} label="Stock Search" variant="outlined" />}
+                renderInput={(params) => <TextField {...params} onChange={handleChange} label={props.label} variant="outlined" />}
             >
             </Autocomplete>
             {

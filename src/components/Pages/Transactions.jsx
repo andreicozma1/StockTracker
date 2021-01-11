@@ -1,15 +1,14 @@
-import { useState } from "react"
-import MuiAlert from '@material-ui/lab/Alert';
-import NewTransaction from "../Sections/NewTransactions";
-import PastTransactions from "../Sections/PastTransactions";
 import { Snackbar } from "@material-ui/core";
+import MuiAlert from '@material-ui/lab/Alert';
+import { useState } from "react";
+import NewTransaction from "../Sections/NewTransaction";
+import PastTransactions from "../Sections/PastTransactions";
+import { useStickyState } from "../Utils";
 
 
 function Alert(props) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
-
-
 
 /* ID Must not be changed and be unique */
 const transTypes = {
@@ -21,7 +20,10 @@ const transTypes = {
 };
 
 function Transactions() {
-    const [transactions, setTransactions] = useState({});
+    console.log("Rendering page Transactions");
+
+    const [transactions, setTransactions] = useStickyState({}, "transactions");
+
     const [showSnackBar, setShowSnackbar] = useState({
         severity: "info",
         message: ""
@@ -39,8 +41,8 @@ function Transactions() {
 
     const handleAddTrans = (transaction, bulk) => {
         console.log(transaction);
-        if(bulk) {
-            setTransactions(transaction, bulk);
+        if (bulk) {
+            setTransactions(transaction);
         } else {
             if (transactions.hasOwnProperty(transaction.id)) {
                 console.error("Transaction already exists");

@@ -1,14 +1,17 @@
-import { useState } from "react"
+import { Avatar, Card, CardActions, CardContent, CardHeader, Collapse, Divider, Fade, Grid, IconButton, List, ListItem, ListItemAvatar, ListItemText, makeStyles, Paper, Tooltip, Typography, withStyles } from "@material-ui/core";
+import { BusinessTwoTone, Delete, ExpandMore, InfoTwoTone, Phone, Public } from "@material-ui/icons";
 import clsx from 'clsx';
-import { BusinessTwoTone, Delete, ExpandMore, InfoTwoTone, Phone, Public } from "@material-ui/icons"
-import { Paper, Typography, Card, CardContent, Grid, makeStyles, Avatar, CardHeader, IconButton, CardActions, Collapse, Divider, List, ListItem, ListItemAvatar, ListItemText } from "@material-ui/core";
-import Peers from "./Peers";
+import { useState } from "react";
 import NewsSentiment from "./NewsSentiment";
+import Peers from "./Peers";
 import RecommendationTrend from "./RecomTrends";
 
 const useStyles = makeStyles((theme) => ({
     headerRoot: {
         backgroundColor: theme.palette.secondary.main,
+    },
+    headerAvatarBtn: {
+        padding: 0,
     },
     headerAvatar: {
         width: theme.spacing(7),
@@ -36,14 +39,33 @@ const useStyles = makeStyles((theme) => ({
     expandOpen: {
         transform: 'rotate(180deg)',
     },
-
+    positive: {
+        color: theme.palette.text.positive,
+        fontWeight: "bold"
+    },
+    negative: {
+        color: theme.palette.text.negative,
+        fontWeight: "bold"
+    }
 }))
+
+const BigTooltip = withStyles((theme) => ({
+    tooltip: {
+        fontSize: 16,
+        fontWeight: "bold"
+    },
+}))(Tooltip);
 
 function formatCurrency(amount) {
     return (amount).toLocaleString("en-US", {
         style: 'currency',
         currency: "USD",
     });
+}
+
+function getChangeText(current, compare, showStart) {
+    const difference = current - compare
+    return (showStart ? "Current price is " : "") + (difference >= 0 ? "+" : "") + difference.toFixed(2) + " (" + (difference >= 0 ? "+" : "") + ((current / compare - 1) * 100).toFixed(2) + "%)";
 }
 
 export default function StockCard(props) {
@@ -64,27 +86,40 @@ export default function StockCard(props) {
                     }
                 }
                 avatar={
-                    <Avatar component={Paper} className={classes.headerAvatar} variant="rounded" src={card.logo}>{card.ticker[0]}</Avatar>
+                    <Tooltip title="Open in new window" arrow placement="top-start">
+                        <IconButton className={classes.headerAvatarBtn}>
+                            <Avatar component={Paper} className={classes.headerAvatar} variant="rounded" src={card.logo}>{card.ticker[0]}</Avatar>
+                        </IconButton>
+                    </Tooltip>
+
                 }
                 title={card.name + " (" + card.ticker + ")"}
                 titleTypographyProps={{ variant: "h6" }}
                 subheader={card.finnhubIndustry}
                 subheaderTypographyProps={{ variant: "subtitle1" }}
                 action={
-                    <IconButton className={classes.headerText} onClick={props.onClose}>
-                        <Delete />
-                    </IconButton>
+                    <Tooltip title="Remove card" arrow placement="left">
+                        <IconButton className={classes.headerText} onClick={props.onClose}>
+                            <Delete />
+                        </IconButton>
+                    </Tooltip>
+
                 }
             />
             <Divider />
             <CardContent>
                 <Grid container spacing={3} justify="space-between" alignItems="center">
 
-                    <Grid item xs={6}>
-                        <Typography variant="h4" className={classes.currentPriceStyle}>{card.quote.c ? formatCurrency(card.quote.c) : "N/A"}</Typography>
+                    <Grid container item xs={9} spacing={1} alignItems="baseline">
+                        <Grid item>
+                            <Typography variant="h4" className={classes.currentPriceStyle}>{card.quote.c ? formatCurrency(card.quote.c) : "N/A"}</Typography>
+                        </Grid>
+                        <Grid item>
+                            <Typography variant="h5" className={(card.quote.c - card.quote.pc >= 0) ? classes.positive : classes.negative}>{getChangeText(card.quote.c, card.quote.pc, false)}</Typography>
+                        </Grid>
                     </Grid>
 
-                    <Grid item xs={6}>
+                    <Grid item xs={3}>
                         <Typography className={classes.alignRight} variant="subtitle2">{card.exchange} <br /> {card.country + " - " + card.currency}</Typography>
                     </Grid>
 
@@ -93,7 +128,9 @@ export default function StockCard(props) {
                             <Typography variant="subtitle1">Prev Close {card.quote.hasOwnProperty("backup") ? card.country : ""}</Typography>
                         </Grid>
                         <Grid item>
-                            <Typography variant="h6" color="secondary">{card.quote.pc ? formatCurrency(card.quote.pc) : "N/A"}</Typography>
+                            <BigTooltip TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} leaveDelay={200} title={getChangeText(card.quote.c, card.quote.pc, true)} arrow>
+                                <Typography variant="h6" color="secondary">{card.quote.pc ? formatCurrency(card.quote.pc) : "N/A"}</Typography>
+                            </BigTooltip>
                         </Grid>
                     </Grid>
 
@@ -102,7 +139,10 @@ export default function StockCard(props) {
                             <Typography variant="subtitle1">Day Open {card.quote.hasOwnProperty("backup") ? card.country : ""}</Typography>
                         </Grid>
                         <Grid item>
-                            <Typography variant="h6" color="secondary">{card.quote.o ? formatCurrency(card.quote.o) : "N/A"}</Typography>
+                            <BigTooltip TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} leaveDelay={200} title={getChangeText(card.quote.c, card.quote.o, true)} arrow>
+                                <Typography variant="h6" color="secondary">{card.quote.o ? formatCurrency(card.quote.o) : "N/A"}</Typography>
+                            </BigTooltip>
+
                         </Grid>
                     </Grid>
 
@@ -111,7 +151,12 @@ export default function StockCard(props) {
                             <Typography variant="subtitle1">High today {card.quote.hasOwnProperty("backup") ? card.country : ""}</Typography>
                         </Grid>
                         <Grid item>
-                            <Typography variant="h6" color="secondary">{card.quote.h ? formatCurrency(card.quote.h) : "N/A"}</Typography>
+
+                            <BigTooltip TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} leaveDelay={200} title={getChangeText(card.quote.c, card.quote.h, true)} arrow>
+
+                                <Typography variant="h6" color="secondary">{card.quote.h ? formatCurrency(card.quote.h) : "N/A"}</Typography>
+                            </BigTooltip>
+
                         </Grid>
                     </Grid>
 
@@ -120,36 +165,50 @@ export default function StockCard(props) {
                             <Typography variant="subtitle1">Low Today {card.quote.hasOwnProperty("backup") ? card.country : ""}</Typography>
                         </Grid>
                         <Grid item>
-                            <Typography variant="h6" color="secondary">{card.quote.l ? formatCurrency(card.quote.l) : "N/A"}</Typography>
+                            <BigTooltip TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} leaveDelay={200} title={getChangeText(card.quote.c, card.quote.l, true)} arrow>
+
+                                <Typography variant="h6" color="secondary">{card.quote.l ? formatCurrency(card.quote.l) : "N/A"}</Typography>
+                            </BigTooltip>
+
                         </Grid>
                     </Grid>
 
                 </Grid>
             </CardContent>
             <CardActions disableSpacing>
-                <IconButton color="secondary" href={card.weburl} target="_blank">
-                    <Public />
-                </IconButton>
-                <IconButton color="secondary" href={card.phone} target="_blank">
-                    <Phone />
-                </IconButton>
-                <IconButton
-                    color="secondary"
-                    className={clsx(classes.expand, {
-                        [classes.expandOpen]: expanded,
-                    })}
-                    onClick={() => setExpanded(!expanded)}
-                    aria-expanded={expanded}
-                >
-                    <ExpandMore />
-                </IconButton>
+                <Tooltip title={"Open " + card.weburl} arrow>
+                    <IconButton color="secondary" href={card.weburl} target="_blank">
+                        <Public />
+                    </IconButton>
+                </Tooltip>
+
+                <Tooltip title={"Call " + card.phone} arrow>
+                    <IconButton color="secondary" href={"tel:" + card.phone} target="_blank">
+                        <Phone />
+                    </IconButton>
+                </Tooltip>
+
+                <Tooltip title={(expanded ? "Hide" : "Show") + " details"} arrow placement="left">
+                    <IconButton
+                        color="secondary"
+                        className={clsx(classes.expand, {
+                            [classes.expandOpen]: expanded,
+                        })}
+                        onClick={() => setExpanded(!expanded)}
+                        aria-expanded={expanded}
+                    >
+                        <ExpandMore />
+                    </IconButton>
+                </Tooltip>
             </CardActions>
             <Divider />
-            <Collapse in={expanded} timeout="auto" unmountOnExit classes={{ container: classes.collapseStyle }}>
+            <Collapse in={expanded} timeout="auto" classes={{ container: classes.collapseStyle }}>
                 <List>
                     <ListItem>
                         <ListItemAvatar>
-                            <InfoTwoTone color="secondary" />
+                            <Tooltip title="Click to refresh" arrow>
+                                <InfoTwoTone color="secondary" />
+                            </Tooltip>
                         </ListItemAvatar>
                         <ListItemText>
                             <Grid container item justify="space-around" alignItems="center">
@@ -188,7 +247,9 @@ export default function StockCard(props) {
 
                     <ListItem>
                         <ListItemAvatar>
-                            <BusinessTwoTone color="secondary" />
+                            <Tooltip title="Click to refresh" arrow>
+                                <BusinessTwoTone color="secondary" />
+                            </Tooltip>
                         </ListItemAvatar>
                         <ListItemText>
                             <Peers ticker={card.ticker} />
@@ -199,7 +260,9 @@ export default function StockCard(props) {
 
                     <ListItem>
                         <ListItemAvatar>
-                            <BusinessTwoTone color="secondary" />
+                            <Tooltip title="Click to refresh" arrow>
+                                <BusinessTwoTone color="secondary" />
+                            </Tooltip>
                         </ListItemAvatar>
                         <ListItemText>
                             <NewsSentiment ticker={card.ticker} />
@@ -210,7 +273,9 @@ export default function StockCard(props) {
 
                     <ListItem>
                         <ListItemAvatar>
-                            <BusinessTwoTone color="secondary" />
+                            <Tooltip title="Click to refresh" arrow>
+                                <BusinessTwoTone color="secondary" />
+                            </Tooltip>
                         </ListItemAvatar>
                         <ListItemText>
                             <RecommendationTrend ticker={card.ticker} />

@@ -1,6 +1,6 @@
 
-import { Grid, makeStyles, Button, CircularProgress, Typography } from "@material-ui/core";
-import { useState } from "react"
+import { Button, CircularProgress, Grid, makeStyles, Typography } from "@material-ui/core";
+import { useEffect, useState } from "react";
 
 const axios = require("axios");
 
@@ -18,32 +18,33 @@ const useStyles = makeStyles((theme) => ({
 export default function Peers(props) {
     const classes = useStyles()
 
-    const [peers, setPeers] = useState([]);
+    const [data, setData] = useState([]);
 
-    const getPeers = async function () {
+    const refresh = function () {
 
-        console.log("Updating peers for " + props.ticker);
-        if (peers.length === 0) {
-            axios.get('https://finnhub.io/api/v1/stock/peers', {
-                params: {
-                    symbol: props.ticker,
-                    token: process.env.REACT_APP_FINNHUB_KEY
-                }
-            }).then(result => {
-                setPeers(result.data)
-            })
-        } else {
-            console.warn("Shall not update peers for " + props.ticker)
-        }
+        console.info("refresh: Fetching fresh Peers data for " + props.ticker);
+
+        axios.get('https://finnhub.io/api/v1/stock/peers', {
+            params: {
+                symbol: props.ticker,
+                token: process.env.REACT_APP_FINNHUB_KEY
+            }
+        }).then(result => {
+            console.info("refresh: Got Peers data for " + props.ticker);
+            console.log(result)
+            setData(result.data)
+        })
+
     }
+    useEffect(refresh, []);
 
     const makeRetryBtn = () => {
         return <Button
             variant="contained"
             color="secondary"
-            onClick={getPeers}
+            onClick={refresh}
             startIcon={
-                <CircularProgress size={20} color="snow" />
+                <CircularProgress size={20} color="inherit" />
             }>
             RELOAD
         </Button>
@@ -66,7 +67,7 @@ export default function Peers(props) {
             </Grid>
             <Grid container item xs={10} spacing={1} className={classes.root} justify="flex-end" alignItems="center">
                 {
-                    (peers.length === 0) ? makeRetryBtn() : peers.map((ticker) => {
+                    (data.length === 0) ? makeRetryBtn() : data.map((ticker) => {
                         return makePeerItem(ticker)
                     })
                 }

@@ -1,6 +1,6 @@
 
-import { Grid, makeStyles, Button, CircularProgress, Typography } from "@material-ui/core";
-import { useState } from "react"
+import { Button, CircularProgress, Grid, makeStyles, Typography } from "@material-ui/core";
+import { useEffect, useState } from "react";
 
 const axios = require("axios");
 
@@ -14,27 +14,27 @@ const useStyles = makeStyles((theme) => ({
 export default function NewsSentiment(props) {
     const classes = useStyles()
 
-    const [peers, setPeers] = useState(null);
+    const [data, setData] = useState(null);
 
-    const getPeers = async function () {
+    const refresh = function () {
+        console.info("refresh: Fetching fresh News Sentiment data for " + props.ticker);
 
-        console.log("Updating peers for " + props.ticker);
-        if (peers === null) {
-            axios.get('https://finnhub.io/api/v1/news-sentiment', {
-                params: {
-                    symbol: props.ticker,
-                    token: process.env.REACT_APP_FINNHUB_KEY
-                }
-            }).then(result => {
-                setPeers(result.data)
-            })
-        } else {
-            console.warn("Shall not update peers for " + props.ticker)
-        }
+        axios.get('https://finnhub.io/api/v1/news-sentiment', {
+            params: {
+                symbol: props.ticker,
+                token: process.env.REACT_APP_FINNHUB_KEY
+            }
+        }).then(result => {
+            console.info("refresh: Got News Sentiment data for " + props.ticker);
+            console.log(result)
+            setData(result.data)
+        })
     }
 
+    useEffect(refresh, []);
+
     return (
-        peers == null ? <Grid container justify="space-around" alignItems="center">
+        data == null ? <Grid container justify="space-around" alignItems="center">
 
             <Grid item xs={4}>
                 <Typography variant="subtitle2">NEWS SENTIMENT</Typography>
@@ -44,9 +44,9 @@ export default function NewsSentiment(props) {
                 <Button
                     variant="contained"
                     color="secondary"
-                    onClick={getPeers}
+                    onClick={refresh}
                     startIcon={
-                        <CircularProgress size={20} color="snow" />
+                        <CircularProgress size={20} color="inherit" />
                     }>
                     RELOAD
                 </Button>
@@ -62,7 +62,7 @@ export default function NewsSentiment(props) {
                         <Typography variant="subtitle1">This Week</Typography>
                     </Grid>
                     <Grid item>
-                        <Typography variant="h6" color="secondary">{peers.buzz.articlesInLastWeek}</Typography>
+                        <Typography variant="h6" color="secondary">{data.buzz.articlesInLastWeek}</Typography>
                     </Grid>
                 </Grid>
 
@@ -71,7 +71,7 @@ export default function NewsSentiment(props) {
                         <Typography variant="subtitle1">Weekly Average</Typography>
                     </Grid>
                     <Grid item>
-                        <Typography variant="h6" color="secondary">{peers.buzz.weeklyAverage}</Typography>
+                        <Typography variant="h6" color="secondary">{data.buzz.weeklyAverage}</Typography>
                     </Grid>
                 </Grid>
 
@@ -84,7 +84,7 @@ export default function NewsSentiment(props) {
                         <Typography variant="subtitle1">Buzz</Typography>
                     </Grid>
                     <Grid item>
-                        <Typography variant="h6" color="secondary">{(peers.buzz.buzz * 100).toFixed(2)}%</Typography>
+                        <Typography variant="h6" color="secondary">{(data.buzz.buzz * 100).toFixed(2)}%</Typography>
 
                     </Grid>
                 </Grid>
@@ -94,7 +94,7 @@ export default function NewsSentiment(props) {
                         <Typography variant="subtitle1">News Score</Typography>
                     </Grid>
                     <Grid item>
-                        <Typography variant="h6" color="secondary">{(peers.companyNewsScore * 100).toFixed(2)}%</Typography>
+                        <Typography variant="h6" color="secondary">{(data.companyNewsScore * 100).toFixed(2)}%</Typography>
                     </Grid>
                 </Grid>
 
@@ -109,7 +109,7 @@ export default function NewsSentiment(props) {
                         <Typography variant="subtitle1">Bullish</Typography>
                     </Grid>
                     <Grid item>
-                        <Typography variant="h6" color="secondary">{(peers.sectorAverageBullishPercent * 100).toFixed(2)}%</Typography>
+                        <Typography variant="h6" color="secondary">{(data.sectorAverageBullishPercent * 100).toFixed(2)}%</Typography>
                     </Grid>
                 </Grid>
 
@@ -118,7 +118,7 @@ export default function NewsSentiment(props) {
                         <Typography variant="subtitle1">News Score</Typography>
                     </Grid>
                     <Grid item>
-                        <Typography variant="h6" color="secondary">{(peers.sectorAverageNewsScore * 100).toFixed(2)}%</Typography>
+                        <Typography variant="h6" color="secondary">{(data.sectorAverageNewsScore * 100).toFixed(2)}%</Typography>
                     </Grid>
                 </Grid>
 
@@ -131,7 +131,7 @@ export default function NewsSentiment(props) {
                         <Typography variant="subtitle1">Bullish</Typography>
                     </Grid>
                     <Grid item>
-                        <Typography variant="h6" color="secondary">{(peers.sentiment.bullishPercent * 100).toFixed(2)}%</Typography>
+                        <Typography variant="h6" color="secondary">{(data.sentiment.bullishPercent * 100).toFixed(2)}%</Typography>
                     </Grid>
                 </Grid>
                 <Grid container item xs={5} direction="column" alignItems="center">
@@ -139,7 +139,7 @@ export default function NewsSentiment(props) {
                         <Typography variant="subtitle1">Bearish</Typography>
                     </Grid>
                     <Grid item>
-                        <Typography variant="h6" color="secondary">{(peers.sentiment.bearishPercent * 100).toFixed(2)}%</Typography>
+                        <Typography variant="h6" color="secondary">{(data.sentiment.bearishPercent * 100).toFixed(2)}%</Typography>
                     </Grid>
                 </Grid>
 

@@ -1,9 +1,9 @@
-import { useState } from "react"
+import { Grid, LinearProgress, makeStyles, Snackbar } from "@material-ui/core";
 import MuiAlert from '@material-ui/lab/Alert';
-import { makeStyles, Snackbar, LinearProgress, Grid } from "@material-ui/core";
-import StockCard from "../Sections/StockCard";
+import { useState } from "react";
 import SearchStocks from "../Sections/SearchStocks";
-import {useStickyState} from "../Utils";
+import StockCard from "../Sections/StockCard";
+import { useStickyState } from "../Utils";
 
 const axios = require("axios");
 
@@ -33,7 +33,7 @@ function logError(error) {
 }
 
 export default function Discover() {
-    console.log("Discover");
+    console.log("Rendering page Discover");
 
     const classes = useStyles()
     const [autocompleteValues, setAutocompleteValues] = useStickyState([], "autocompleteValues")
@@ -54,8 +54,8 @@ export default function Discover() {
         });
     };
 
-    const onSelect = async function (event, selected_arr) {
-        console.log("Selected")
+    const onSelect = function (event, selected_arr) {
+        console.log("Sto")
         console.log(selected_arr);
 
         setAutocompleteValues(selected_arr);
@@ -192,8 +192,6 @@ export default function Discover() {
             <Grid container spacing={1} >
                 {
                     Object.values(cards).map((card) => {
-                        console.log("Rendering");
-                        console.log(card);
                         return <Grid item md={6} key={card.country + "-" + card.currency + "-" + card.ticker} >
                             <StockCard info={card} onClose={() => handleCardClose(card.ticker)} />
                         </Grid>

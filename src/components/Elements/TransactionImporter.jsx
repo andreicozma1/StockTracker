@@ -1,43 +1,17 @@
 
-import { TextField, makeStyles, Grid, Paper, Button, MenuItem, Select, FormControl, InputLabel, Typography, ButtonGroup, IconButton, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Snackbar } from "@material-ui/core"
-import { Add, CloudUpload, Remove } from "@material-ui/icons"
-import { useState, createRef } from "react"
-import { DateTimePicker } from "@material-ui/pickers";
-import { CSVReader } from 'react-papaparse'
-import { Autocomplete } from "@material-ui/lab";
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, Grid, IconButton, InputLabel, makeStyles, MenuItem, Select, Snackbar, Tooltip } from "@material-ui/core";
+import { CloudUpload } from "@material-ui/icons";
 import MuiAlert from '@material-ui/lab/Alert';
+import { createRef, useState } from "react";
+import { CSVReader } from 'react-papaparse';
 
 const useStyles = makeStyles((theme) => ({
-    root: {
-        padding: theme.spacing(2),
-        justifyContents: "center",
-    },
-    inputDatePicker: {
-        minWidth: 100,
-        width: "100%"
-    },
+
     inputSelector: {
         minWidth: 75,
         width: "100%"
     },
-    inputSubmit: {
-        width: "100%",
-        textAlign: "center",
-        margin: theme.spacing(2, 0)
-    },
 
-    card: {
-        padding: theme.spacing(2),
-        marginTop: theme.spacing(1)
-    },
-
-    transactionForm: {
-        margin: theme.spacing(2, 0, 1),
-        '& .MuiTextField-root': {
-            minWidth: 100,
-            width: "100%"
-        },
-    }
 }))
 
 function Alert(props) {
@@ -46,7 +20,7 @@ function Alert(props) {
 
 const buttonRef = createRef();
 
-export default function TransactionImporter({ onFindStock }) {
+export default function TransactionImporter({ onResult }) {
 
     const classes = useStyles();
 
@@ -85,18 +59,6 @@ export default function TransactionImporter({ onFindStock }) {
             message: ""
         });
     };
-
-    const onFileLoad = (data) => {
-        console.log(data);
-
-        if (data.length > 0) {
-            const sample = data[0].data;
-        } else {
-            console.error("File is empty");
-        }
-
-        fileContentsSet(data)
-    }
 
     const onFileError = (err, file, inputElem, reason) => {
         setShowSnackbar({
@@ -149,7 +111,7 @@ export default function TransactionImporter({ onFindStock }) {
             import_status_set({
                 finished: false
             })
-            onFindStock({}, true);
+            onResult({}, true);
 
             return
         }
@@ -247,30 +209,24 @@ export default function TransactionImporter({ onFindStock }) {
             })
         }
 
-        onFindStock(transactions_obj, true);
+        if (success_rows > 0)
+            onResult(transactions_obj, true);
     }
     return (
-        <div className={classes.inputSubmit}>
+        <div>
             <CSVReader
-                ref={buttonRef} noProgressBar onFileLoad={onFileLoad} onError={onFileError} noclick nodrag onRemoveFile={() => fileContentsSet(null)} dynamicTyping>
+                ref={buttonRef} noProgressBar onFileLoad={(data) => fileContentsSet(data)} onError={onFileError} noclick nodrag onRemoveFile={() => fileContentsSet(null)} dynamicTyping>
 
                 {({ file }) => (
-
-                    <Button
-                        variant="contained"
-                        color="secondary"
-                        onClick={handleOpenFile}
-                        startIcon={<CloudUpload />}>
-                        UPLOAD CSV
-                    </Button>
-
-
+                    <Tooltip title="Import from CSV" arrow placement="right">
+                        <IconButton
+                            onClick={handleOpenFile}>
+                            <CloudUpload />
+                        </IconButton>
+                    </Tooltip>
                 )}
-                {/* <ButtonGroup color="primary">
-                            <Button onClick={handleOpenButton}>Upload</Button>
-                            <Button onClick={handleRemoveButton}>X</Button>
-                        </ButtonGroup> */}
             </CSVReader>
+
             {fileContents && <div>
 
                 <Dialog open={fileContents !== null} onClose={handleRemoveFile}>
@@ -402,7 +358,7 @@ export default function TransactionImporter({ onFindStock }) {
                                                 <Select variant="outlined" value={importer.xtransFees} onChange={(e) => importerSet({ ...importer, xtransFees: e.target.value })}>
                                                     <MenuItem value="">
                                                         Omit (assume 0)
-            </MenuItem>
+                                                    </MenuItem>
                                                     {
                                                         Object.values(fileContents[0].data).map((option, index) => {
                                                             return <MenuItem key={index} value={index}>{option}</MenuItem>
@@ -421,7 +377,7 @@ export default function TransactionImporter({ onFindStock }) {
                                                 <Select variant="outlined" value={importer.xtransSplit} onChange={(e) => importerSet({ ...importer, xtransSplit: e.target.value })}>
                                                     <MenuItem value="">
                                                         Omit (assume 1)
-            </MenuItem>
+                                                    </MenuItem>
                                                     {
                                                         Object.values(fileContents[0].data).map((option, index) => {
                                                             return <MenuItem key={index} value={index}>{option}</MenuItem>
@@ -438,8 +394,13 @@ export default function TransactionImporter({ onFindStock }) {
 
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={handleRemoveFile} color="primary">Close</Button>
-                        <Button onClick={handleUploadTransactions} color="primary">{import_status.finished ? "Clear & Retry" : "Import"}</Button>
+                        <Tooltip title="Cancel import" arrow placement="top-end">
+                            <Button onClick={handleRemoveFile} color="primary">Close</Button>
+                        </Tooltip>
+                        <Tooltip title="Replace portfolio" arrow placement="top-end">
+                            <Button onClick={handleUploadTransactions} color="primary">{import_status.finished ? "Clear & Retry" : "Import"}</Button>
+
+                        </Tooltip>
                     </DialogActions>
                 </Dialog>
 

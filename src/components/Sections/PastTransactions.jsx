@@ -1,5 +1,5 @@
 
-import { makeStyles, Paper, Typography } from "@material-ui/core"
+import { makeStyles, Paper, Typography } from "@material-ui/core";
 import { DataGrid } from '@material-ui/data-grid';
 const useStyles = makeStyles((theme) => ({
 
@@ -19,12 +19,12 @@ function formatCurrency(amount) {
     });
 }
 function formatDate(date) {
-    return ("00" + (date.getMonth() + 1)).slice(-2) 
-    + "/" + ("00" + date.getDate()).slice(-2) 
-    + "/" + date.getFullYear() + " " 
-    + ("00" + date.getHours()).slice(-2) + ":" 
-    + ("00" + date.getMinutes()).slice(-2) 
-    + ":" + ("00" + date.getSeconds()).slice(-2); 
+    return ("00" + (date.getMonth() + 1)).slice(-2)
+        + "/" + ("00" + date.getDate()).slice(-2)
+        + "/" + date.getFullYear() + " "
+        + ("00" + date.getHours()).slice(-2) + ":"
+        + ("00" + date.getMinutes()).slice(-2)
+        + ":" + ("00" + date.getSeconds()).slice(-2);
 }
 
 const columns = [
@@ -33,7 +33,7 @@ const columns = [
         headerName: 'Date',
         type: 'date',
         width: 175,
-        valueFormatter: (params) => formatDate(params.value)
+        valueFormatter: (params) => formatDate(new Date(params.value))
     },
     {
         field: 'ticker',
