@@ -1,29 +1,27 @@
-
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, Grid, IconButton, InputLabel, makeStyles, MenuItem, Select, Snackbar, Tooltip } from "@material-ui/core";
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, Grid, InputLabel, makeStyles, MenuItem, Select, Snackbar, Tooltip } from "@material-ui/core";
 import { CloudUpload } from "@material-ui/icons";
 import MuiAlert from '@material-ui/lab/Alert';
+import PropTypes from 'prop-types';
 import { createRef, useState } from "react";
 import { CSVReader } from 'react-papaparse';
-
 const useStyles = makeStyles((theme) => ({
-
+    switch: {
+        marginBottom: theme.spacing(2)
+    },
     inputSelector: {
         minWidth: 75,
         width: "100%"
     },
-
 }))
-
 function Alert(props) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
 const buttonRef = createRef();
 
-export default function TransactionImporter({ onResult }) {
+export default function DialogImportCSV({ open, onInsertAll, onClose, ...props }) {
 
     const classes = useStyles();
-
     const [fileContents, fileContentsSet] = useState(null);
 
     const [importer, importerSet] = useState({
@@ -35,7 +33,6 @@ export default function TransactionImporter({ onResult }) {
         xtransFees: "",
         xtransSplit: ""
     })
-
 
     const [import_status, import_status_set] = useState({
         finished: false,
@@ -94,11 +91,13 @@ export default function TransactionImporter({ onResult }) {
                 xtransFees: "",
                 xtransSplit: ""
             })
+            onClose();
         }
     }
 
+
     const handleUploadTransactions = () => {
-        console.log("Uploading transactions")
+        console.log("Attempting to import transactions. Selected matching field indices:")
         console.log(importer.xtransDate + " -  importer.xtransDateSet")
         console.log(importer.xtransType + " -  importer.xtransTypeSet")
         console.log(importer.xtransTicker + " -  importer.xtransTickerSet")
@@ -111,7 +110,7 @@ export default function TransactionImporter({ onResult }) {
             import_status_set({
                 finished: false
             })
-            onResult({}, true);
+            onInsertAll({});
 
             return
         }
@@ -143,22 +142,22 @@ export default function TransactionImporter({ onResult }) {
                         continue;
                     }
 
-                    const id = dtransDate.getFullYear() + "-" + (dtransDate.getMonth() + 1) + "-" + dtransDate.getHours() + "-" + dtransDate.getMinutes() + "-" + dtransType + "-" + dtransTicker + "-" + dtransUnits + "-" + dtransPrice + "-" + dtransFees + "-" + dtransSplit;
-
-                    const resultobj = {
-                        id: id,
+                    const new_trans = {
                         date: dtransDate,
                         type: dtransType,
-                        ticker: dtransTicker,
+                        symbol: dtransTicker,
                         units: dtransUnits,
                         price: dtransPrice,
                         fees: dtransFees,
                         split: dtransSplit
                     };
+
+                    new_trans.id = dtransDate.getFullYear() + "-" + (dtransDate.getMonth() + 1) + "-" + dtransDate.getHours() + "-" + dtransDate.getMinutes() + "-" + dtransType + "-" + dtransTicker + "-" + dtransUnits + "-" + dtransPrice + "-" + dtransFees + "-" + dtransSplit;
+
                     // console.log(resultobj);
                     success_rows++;
 
-                    transactions_obj[id] = resultobj
+                    transactions_obj[new_trans.id] = new_trans
                 } catch (error) {
                     console.log(error);
                     error_rows++;
@@ -209,32 +208,38 @@ export default function TransactionImporter({ onResult }) {
             })
         }
 
+        console.log("Success: " + success_rows + " ; nonstock: " + nonstock_rows)
         if (success_rows > 0)
-            onResult(transactions_obj, true);
+            onInsertAll(transactions_obj);
     }
+
+
     return (
-        <div>
-            <CSVReader
-                ref={buttonRef} noProgressBar onFileLoad={(data) => fileContentsSet(data)} onError={onFileError} noclick nodrag onRemoveFile={() => fileContentsSet(null)} dynamicTyping>
+        <Dialog open={open} {...props}>
+            <DialogTitle>Import CSV</DialogTitle>
+            <DialogContent>
+                <DialogContentText>
+                    This action will replace all your past transactions with all valid stock transactions found in this file.
+                </DialogContentText>
 
-                {({ file }) => (
-                    <Tooltip title="Import from CSV" arrow placement="right">
-                        <IconButton
-                            onClick={handleOpenFile}>
-                            <CloudUpload />
-                        </IconButton>
-                    </Tooltip>
-                )}
-            </CSVReader>
+                <CSVReader
+                    ref={buttonRef} noProgressBar onFileLoad={(data) => { fileContentsSet(data); console.log(data) }} onError={onFileError} noclick nodrag onRemoveFile={() => fileContentsSet(null)} dynamicTyping>
 
-            {fileContents && <div>
+                    {({ file }) => (
 
-                <Dialog open={fileContents !== null} onClose={handleRemoveFile}>
-                    <DialogTitle>{"Import " + fileContents.length + " records from CSV"}</DialogTitle>
-                    <DialogContent>
-                        <DialogContentText>
-                            This action will replace all your past transactions with all valid stock transactions found in this file.
-                                </DialogContentText>
+                        <Tooltip title="Import from CSV" arrow placement="right">
+                            <Button variant="contained" className={classes.switch}
+                                onClick={handleOpenFile} startIcon={<CloudUpload />} color="primary">
+                                {file ? file.name : "Upload File"}
+                            </Button>
+                        </Tooltip>
+
+
+                    )}
+                </CSVReader>
+                {
+                    fileContents && <div>
+
 
                         {
                             import_status.finished ? <div>
@@ -267,7 +272,7 @@ export default function TransactionImporter({ onResult }) {
                                                     </MenuItem>
                                                     {
                                                         Object.values(fileContents[0].data).map((option, index) => {
-                                                            return <MenuItem key={index} value={index}>{option}</MenuItem>
+                                                            return (Object.values(importer).includes(index) && index !== importer.xtransDate) ? null : <MenuItem key={index} value={index}>{option}</MenuItem>
                                                         })
                                                     }
 
@@ -285,7 +290,7 @@ export default function TransactionImporter({ onResult }) {
                                                     </MenuItem>
                                                     {
                                                         Object.values(fileContents[0].data).map((option, index) => {
-                                                            return <MenuItem key={index} value={index}>{option}</MenuItem>
+                                                            return (Object.values(importer).includes(index) && index !== importer.xtransTicker) ? null : <MenuItem key={index} value={index}>{option}</MenuItem>
                                                         })
                                                     }
 
@@ -294,23 +299,25 @@ export default function TransactionImporter({ onResult }) {
                                         </Grid>
 
 
-                                        <Grid item>
 
+                                        <Grid item >
                                             <FormControl className={classes.inputSelector} required>
                                                 <InputLabel>Transaction Type</InputLabel>
-                                                <Select variant="outlined" value={importer.xtransType} onChange={(e) => importerSet({ ...importer, xtransType: e.target.value })}>
+                                                <Select variant="outlined" value={importer.xtransType} onChange={(e) => { importerSet({ ...importer, xtransType: e.target.value }) }}>
                                                     <MenuItem value="" disabled>
                                                         Transaction Type Field
                                                     </MenuItem>
                                                     {
                                                         Object.values(fileContents[0].data).map((option, index) => {
-                                                            return <MenuItem key={index} value={index}>{option}</MenuItem>
+                                                            return (Object.values(importer).includes(index) && index !== importer.xtransType) ? null : <MenuItem key={index} value={index}>{option}</MenuItem>
                                                         })
                                                     }
 
                                                 </Select>
                                             </FormControl>
                                         </Grid>
+
+
 
 
                                         <Grid item>
@@ -323,7 +330,7 @@ export default function TransactionImporter({ onResult }) {
                                                     </MenuItem>
                                                     {
                                                         Object.values(fileContents[0].data).map((option, index) => {
-                                                            return <MenuItem key={index} value={index}>{option}</MenuItem>
+                                                            return (Object.values(importer).includes(index) && index !== importer.xtransUnits) ? null : <MenuItem key={index} value={index}>{option}</MenuItem>
                                                         })
                                                     }
 
@@ -342,7 +349,7 @@ export default function TransactionImporter({ onResult }) {
                                                     </MenuItem>
                                                     {
                                                         Object.values(fileContents[0].data).map((option, index) => {
-                                                            return <MenuItem key={index} value={index}>{option}</MenuItem>
+                                                            return (Object.values(importer).includes(index) && index !== importer.xtransPrice) ? null : <MenuItem key={index} value={index}>{option}</MenuItem>
                                                         })
                                                     }
 
@@ -361,7 +368,7 @@ export default function TransactionImporter({ onResult }) {
                                                     </MenuItem>
                                                     {
                                                         Object.values(fileContents[0].data).map((option, index) => {
-                                                            return <MenuItem key={index} value={index}>{option}</MenuItem>
+                                                            return (Object.values(importer).includes(index) && index !== importer.xtransFees) ? null : <MenuItem key={index} value={index}>{option}</MenuItem>
                                                         })
                                                     }
 
@@ -380,7 +387,7 @@ export default function TransactionImporter({ onResult }) {
                                                     </MenuItem>
                                                     {
                                                         Object.values(fileContents[0].data).map((option, index) => {
-                                                            return <MenuItem key={index} value={index}>{option}</MenuItem>
+                                                            return (Object.values(importer).includes(index) && index !== importer.xtransSplit) ? null : <MenuItem key={index} value={index}>{option}</MenuItem>
                                                         })
                                                     }
 
@@ -391,31 +398,33 @@ export default function TransactionImporter({ onResult }) {
 
                                 </div>
                         }
+                    </div>
+                }
 
-                    </DialogContent>
-                    <DialogActions>
-                        <Tooltip title="Cancel import" arrow placement="top-end">
-                            <Button onClick={handleRemoveFile} color="primary">Close</Button>
-                        </Tooltip>
-                        <Tooltip title="Replace portfolio" arrow placement="top-end">
-                            <Button onClick={handleUploadTransactions} color="primary">{import_status.finished ? "Clear & Retry" : "Import"}</Button>
+            </DialogContent>
+            <DialogActions>
+                <Tooltip title="Cancel import" arrow placement="top-end">
+                    <Button onClick={handleRemoveFile} color="primary">Close</Button>
+                </Tooltip>
+                <Tooltip title="Replace portfolio" arrow placement="top-end">
+                    <Button onClick={handleUploadTransactions} color="primary">{import_status.finished ? "Clear & Retry" : "Import"}</Button>
 
-                        </Tooltip>
-                    </DialogActions>
-                </Dialog>
-
-
-            </div>
-            }
+                </Tooltip>
+            </DialogActions>
 
             {
                 showSnackBar.message !== "" &&
-                <Snackbar open={showSnackBar.message !== ""} autoHideDuration={6000} onClose={onCloseSnackbar}>
+                <Snackbar open={showSnackBar.message !== ""} autoHideDuration={3000} onClose={onCloseSnackbar}>
                     <Alert onClose={onCloseSnackbar} severity={showSnackBar.severity}>
                         {showSnackBar.message}
                     </Alert>
                 </Snackbar>
             }
-        </div>
+        </Dialog>
     )
+}
+
+DialogImportCSV.propTypes = {
+    open: PropTypes.bool.isRequired,
+    onInsertAll: PropTypes.func.isRequired,
 }

@@ -1,10 +1,8 @@
 
-import { Button, ButtonGroup, FormControl, Grid, InputLabel, makeStyles, MenuItem, Paper, Select, Snackbar, TextField, Typography } from "@material-ui/core";
-import { Add } from "@material-ui/icons";
-import MuiAlert from '@material-ui/lab/Alert';
+import { FormControl, Grid, InputLabel, makeStyles, MenuItem, Select, TextField } from "@material-ui/core";
 import { DateTimePicker } from "@material-ui/pickers";
-import { useState } from "react";
-import TransactionImporter from "../Elements/TransactionImporter";
+import PropTypes from "prop-types";
+import { def_trans_types } from "../Defaults";
 import SearchStocks from "./SearchStocks";
 
 const useStyles = makeStyles((theme) => ({
@@ -27,132 +25,68 @@ const useStyles = makeStyles((theme) => ({
         marginTop: theme.spacing(1)
     },
 
-    transactionForm: {
-        margin: theme.spacing(2, 0, 1),
-    }
 }))
 
-function Alert(props) {
-    return <MuiAlert elevation={6} variant="filled" {...props} />;
-}
 
-
-export default function NewTransaction({ onClick, transTypes }) {
+export default function NewTransaction({ transaction, setTransaction }) {
     const classes = useStyles();
 
-    const [transDate, transDateSet] = useState(new Date());
-    const [transType, transTypeSet] = useState(transTypes["Buy"]);
-    const [transTicker, transTickerSet] = useState(null);
-    const [transUnits, transUnitsSet] = useState("");
-    const [transPrice, transPriceSet] = useState("");
-    const [transFees, transFeesSet] = useState("");
-    const [transSplit, transSplitSet] = useState("");
 
-    const [showSnackBar, setShowSnackbar] = useState({
-        severity: "info",
-        message: ""
-    });
-
-    const handleCloseSnackbar = (event, reason) => {
-        if (reason === 'clickaway') {
-            return;
-        }
-        setShowSnackbar({
-            severity: "info",
-            message: ""
-        });
-    };
-
-    const handleSubmit = () => {
-        try {
-            const id = transDate.getFullYear() + "-" + (transDate.getMonth() + 1) + "-" + transDate.getHours() + "-" + transDate.getMinutes() + "-" + transType + "-" + transTicker.symbol + "-" + transUnits + "-" + transPrice + "-" + transFees + "-" + transSplit;
-            onClick({
-                id: id,
-                date: transDate,
-                type: transType,
-                ticker: transTicker.symbol,
-                units: transUnits,
-                price: transPrice,
-                fees: transFees,
-                split: transSplit
-            });
-        } catch (error) {
-            console.error("Invalid Single-Transaction field. Cannot add transaction")
-            setShowSnackbar({
-                severity: "warning",
-                message: "Please fill all required fields."
-            });
-        }
-
+    const handleChange = (value, element) => {
+        var new_state = { ...transaction };
+        new_state[element] = value;
+        setTransaction(new_state)
     }
 
     return (
-        <Paper className={classes.card}>
-            <Typography variant="h5" color="primary">New Transaction</Typography>
-            <form className={classes.transactionForm}>
-                <Grid container spacing={1} justify="center">
+        <form>
+            <Grid container spacing={1} justify="center">
 
-                    <Grid item xs={12} sm={6} md={4} lg={2}>
-                        <DateTimePicker className={classes.inputDatePicker} label="Date" inputVariant="outlined" value={transDate} onChange={transDateSet} />
-                    </Grid>
-
-                    <Grid item xs={8} sm={4} md={4} lg={3}>
-                        <SearchStocks onChange={(event, value) => transTickerSet(value)} label="Stock Symbol" value={transTicker} />
-                    </Grid>
-
-                    <Grid item xs={4} sm={2} md={3} lg={2}>
-                        <FormControl required className={classes.inputSelector}>
-                            <InputLabel id="label-ticker">Type</InputLabel>
-                            <Select variant="outlined" value={transType} onChange={(e) => transTypeSet(e.target.value)} >
-                                {
-                                    Object.keys(transTypes).map((trans_name) => {
-                                        const transId = transTypes[trans_name];
-                                        return <MenuItem key={transId} value={transId}>{trans_name}</MenuItem>
-                                    })
-                                }
-                            </Select>
-                        </FormControl>
-                    </Grid>
-
-                    <Grid item xs={6} sm={3} md={3} lg={2}>
-                        <TextField required label="Asset Amount" type="number" variant="outlined" value={transUnits} onChange={(e) => transUnitsSet(e.target.value)} />
-                    </Grid>
-
-                    <Grid item xs={6} sm={3} md={3} lg={2}>
-                        <TextField required label="Asset Price" type="number" variant="outlined" value={transPrice} onChange={(e) => transPriceSet(e.target.value)} />
-                    </Grid>
-
-                    <Grid item xs={6} sm={3} md={3} lg={2}>
-                        <TextField required label="Fees" type="number" variant="outlined" value={transFees} onChange={(e) => transFeesSet(e.target.value)} />
-                    </Grid>
-                    <Grid item xs={6} sm={3} md={3} lg={2}>
-                        <TextField required label="Stock Split Ratio" type="number" variant="outlined" value={transSplit} onChange={(e) => transSplitSet(e.target.value)} />
-                    </Grid>
-
+                <Grid item xs={6}>
+                    <DateTimePicker className={classes.inputDatePicker} label="Date" inputVariant="outlined" value={transaction.date} onChange={(val) => handleChange(val, "date")} />
                 </Grid>
-                <div className={classes.inputSubmit}>
-                    <ButtonGroup variant="contained" color="secondary">
-                        <Button onClick={handleSubmit} startIcon={<Add />}>Add Transaction</Button>
 
-                        <TransactionImporter onResult={onClick} />
+                <Grid item xs={4}>
+                    <SearchStocks className={classes.inputDatePicker} label="Stock Symbol" value={transaction.symbol} onChange={(event, value) => handleChange(value, "symbol")} />
+                </Grid>
 
-                    </ButtonGroup>
+                <Grid item xs={2}>
+                    <FormControl required className={classes.inputSelector}>
+                        <InputLabel>Type</InputLabel>
+                        <Select variant="outlined" value={transaction.type} onChange={(event) => handleChange(event.target.value, "type")} >
+                            {
+                                Object.keys(def_trans_types.ref).map((trans_id) => {
+                                    const trans_name = def_trans_types.ref[trans_id];
+                                    return <MenuItem key={trans_id} value={trans_id}>{trans_name}</MenuItem>
+                                })
+                            }
+                        </Select>
+                    </FormControl>
+                </Grid>
 
+                <Grid item xs={6}>
+                    <TextField required className={classes.inputDatePicker} label="Asset Amount" type="number" variant="outlined" value={transaction.units} onChange={(event) => handleChange(event.target.value, "units")} />
+                </Grid>
 
-                </div>
+                <Grid item xs={6}>
+                    <TextField required className={classes.inputDatePicker} label="Asset Price" type="number" variant="outlined" value={transaction.price} onChange={(event) => handleChange(event.target.value, "price")} />
+                </Grid>
 
-            </form>
+                <Grid item xs={6}>
+                    <TextField required className={classes.inputDatePicker} label="Fees" type="number" variant="outlined" value={transaction.fees} onChange={(event) => handleChange(event.target.value, "fees")} />
+                </Grid>
+                <Grid item xs={6}>
+                    <TextField required className={classes.inputDatePicker} label="Stock Split Ratio" type="number" variant="outlined" value={transaction.split} onChange={(event) => handleChange(event.target.value, "split")} />
+                </Grid>
 
+            </Grid>
 
-            {
-                showSnackBar.message !== "" &&
-                <Snackbar open={showSnackBar.message !== ""} autoHideDuration={12000} onClose={handleCloseSnackbar}>
-                    <Alert onClose={handleCloseSnackbar} severity={showSnackBar.severity}>
-                        {showSnackBar.message}
-                    </Alert>
-                </Snackbar>
-            }
+        </form>
 
-        </Paper>
     )
+}
+
+NewTransaction.propTypes = {
+    transaction: PropTypes.object.isRequired,
+    setTransaction: PropTypes.func.isRequired,
 }

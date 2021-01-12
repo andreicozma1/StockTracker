@@ -1,9 +1,10 @@
+import MomentUtils from '@date-io/moment';
 import { indigo, teal } from '@material-ui/core/colors';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
-
 
 const theme = createMuiTheme({
   palette: {
@@ -27,7 +28,11 @@ const rootElement = document.getElementById('root');
 ReactDOM.render(
   <React.StrictMode>
     <ThemeProvider theme={theme}>
-      <App />
+      <MuiPickersUtilsProvider utils={MomentUtils}>
+        <App />
+
+      </MuiPickersUtilsProvider>
+
     </ThemeProvider>
   </React.StrictMode>,
   rootElement

@@ -31,7 +31,7 @@ export default function NewsSentiment(props) {
         })
     }
 
-    useEffect(refresh, []);
+    useEffect(refresh, [props.ticker]);
 
     return (
         data == null ? <Grid container justify="space-around" alignItems="center">

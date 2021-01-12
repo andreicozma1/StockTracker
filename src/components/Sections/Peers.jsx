@@ -36,7 +36,7 @@ export default function Peers(props) {
         })
 
     }
-    useEffect(refresh, []);
+    useEffect(refresh, [props.ticker]);
 
     const makeRetryBtn = () => {
         return <Button
