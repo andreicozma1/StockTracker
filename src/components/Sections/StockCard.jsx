@@ -110,7 +110,7 @@ export default function StockCard(props) {
             <CardContent>
                 <Grid container spacing={3} justify="space-between" alignItems="center">
 
-                    <Grid container item xs={9} spacing={1} alignItems="baseline">
+                    <Grid container item xs={9} direction="column">
                         <Grid item>
                             <Typography variant="h4" className={classes.currentPriceStyle}>{card.quote.c ? formatCurrency(card.quote.c) : "N/A"}</Typography>
                         </Grid>

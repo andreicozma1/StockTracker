@@ -10,6 +10,14 @@ const useStyles = makeStyles((theme) => ({
     },
     menuItemMargin: {
         marginLeft: theme.spacing(2)
+    },
+    menuItem: {
+        paddingTop: theme.spacing(1),
+        paddingBottom: theme.spacing(1)
+    },
+    menuDivider: {
+        marginTop: 7,
+        marginBottom: 7
     }
 }));
 
@@ -47,7 +55,7 @@ function Header({ currentPage, setCurrentPage, pageConfig, menuItems, setMenuIte
                     {
                         menuItems.map(function (menu_item) {
 
-                            return <MenuItem onClick={menu_item.callback} key={menu_item.name}>
+                            return <MenuItem className={classes.menuItem} onClick={menu_item.callback} key={menu_item.name}>
                                 {menu_item.icon}
                                 <Typography className={classes.menuItemMargin}>
                                     {menu_item.name}
@@ -55,10 +63,12 @@ function Header({ currentPage, setCurrentPage, pageConfig, menuItems, setMenuIte
                             </MenuItem>
                         })
                     }
-                    <Divider />
+                    {
+                        Object.keys(menuItems) !== 0 && <Divider className={classes.menuDivider} />
+                    }
                     {
                         def_menu_items.map((def_menu_item) => {
-                            return <MenuItem onClick={def_menu_item.callback} key={def_menu_item.name}>
+                            return <MenuItem className={classes.menuItem} onClick={def_menu_item.callback} key={def_menu_item.name}>
                                 {def_menu_item.icon}
 
                                 <Typography className={classes.menuItemMargin}>

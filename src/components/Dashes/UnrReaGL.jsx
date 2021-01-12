@@ -1,5 +1,5 @@
 
-import { Grid, Paper, makeStyles, Typography } from '@material-ui/core'
+import { Grid, makeStyles, Paper, Typography } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
 

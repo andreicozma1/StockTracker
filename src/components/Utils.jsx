@@ -1,6 +1,5 @@
 
 import { useEffect, useState } from "react";
-import { def_trans_types } from "./Defaults";
 
 export function useStickyState(defaultValue, key) {
   const [value, setValue] = useState(() => {
@@ -21,15 +20,6 @@ export function makeMenuItem(name, icon, callback) {
 }
 
 
-export function useTransactionState() {
-  const [transaction, setTransaction] = useState({
-    date: new Date(),
-    symbol: null,
-    type: def_trans_types.default,
-    units: "",
-    price: "",
-    fees: "",
-    split: ""
-  })
-  return [transaction, setTransaction]
+export function getDefault() {
+
 }

@@ -1,8 +1,11 @@
+import { BottomNavigation } from "@material-ui/core";
 
 function Footer() {
 
     return (
-        <h1>Footer</h1>
+        <BottomNavigation>
+
+        </BottomNavigation>
     );
 }
 

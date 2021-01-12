@@ -128,7 +128,7 @@ export default function PastTransactions({ rows, setTransactions }) {
 
     ];
 
-    const [selection, setSelection] = useState([1]);
+    const [selection, setSelection] = useState([]);
 
     return (
         <Paper className={classes.card}>
@@ -136,8 +136,7 @@ export default function PastTransactions({ rows, setTransactions }) {
             <div className={classes.table}>
                 <Grid
                     rows={rows}
-                    columns={columns}
-                >
+                    columns={columns}>
 
 
                     <CurrencyTypeProvider for={currencyColumns} />
@@ -145,6 +144,7 @@ export default function PastTransactions({ rows, setTransactions }) {
                     <UnitTypeProvider for={twoDigitColumns} />
 
                     <SelectionState selection={selection} onSelectionChange={setSelection} />
+
                     <SummaryState
                         totalItems={totalSummaryItems}
                     />
@@ -164,12 +164,12 @@ export default function PastTransactions({ rows, setTransactions }) {
 
                     <TableHeaderRow showSortingControls />
                     <TableSummaryRow />
+
                     <PagingPanel />
+
                     <TableColumnReordering defaultOrder={['date', 'symbol', 'type', 'units', 'price', 'fees', 'split']} />
 
                 </Grid>
-
-                {/* <DataGrid rows={rows} columns={columns} autoPageSize showCellRightBorder scrollbarSize="20" rowHeight={30} checkboxSelection showToolbar="true" onSelectionChange={handleSelection} /> */}
 
             </div>
         </Paper>
