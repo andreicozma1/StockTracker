@@ -6,16 +6,15 @@ import DialogConfirm from "../Elements/DialogConfirm";
 import DialogImportCSV from "../Elements/DialogImportCSV";
 import DialogNewTransaction from "../Elements/DialogNewTransaction";
 import PastTransactions from "../Sections/PastTransactions";
-import { makeMenuItem, useStickyState } from "../Utils";
+import { makeMenuItem } from "../Utils";
 
 function Alert(props) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
 
-export default function Transactions({ setMenuItems }) {
+export default function Transactions({ setMenuItems, transactions, setTransactions }) {
     console.log("Rendering page Transactions");
-    const [transactions, setTransactions] = useStickyState({}, "transactions");
 
     const [showSnackBar, setShowSnackbar] = useState({
         severity: "info",

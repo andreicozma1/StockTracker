@@ -59,10 +59,13 @@ export default function App() {
   const [currentPage, setCurrentPage] = useStickyState(0, "currentPageA")
   const [menuItems, setMenuItems] = useState([])
 
+  const [transactions, setTransactions] = useStickyState({}, "transactions");
 
   console.log("Rendering App - currentPage: " + currentPage);
 
   return (
+
+
 
     <Container maxWidth='lg' className={classes.root}>
       <Header currentPage={currentPage} setCurrentPage={setCurrentPage} pageConfig={pageConfig} menuItems={menuItems} setMenuItems={setMenuItems} />
@@ -72,7 +75,7 @@ export default function App() {
           const page = pageConfig.ref[key]
           const Body = page.component;
           return <TabPanel value={currentPage} index={parseInt(key)} key={key}>
-            <Body setMenuItems={setMenuItems} />
+            <Body setMenuItems={setMenuItems} transactions={transactions} setTransactions={setTransactions} />
           </TabPanel>
         })
       }
