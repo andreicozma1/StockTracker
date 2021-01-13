@@ -27,15 +27,13 @@ function formatCurrency(amount, currency, locale) {
     });
 }
 
-function PortfolioCostValue() {
+function PortfolioCostValue({ totalCost, unrGL }) {
     const classes = useStyles();
 
     const locale = 'en-US';
     const currency = "USD";
 
-    const dollar_cost = 5000;
-    const dollar_unrealized = 1000;
-    const dollar_value = dollar_cost + dollar_unrealized;
+    const total_value = totalCost + unrGL;
 
     return (
         <Grid container spacing={1}>
@@ -45,7 +43,7 @@ function PortfolioCostValue() {
                         Total Cost
                     </Typography>
                     <Typography variant="h3">
-                        {formatCurrency(dollar_cost, currency, locale)}
+                        {formatCurrency(totalCost, currency, locale)}
                     </Typography>
                 </Paper>
             </Grid>
@@ -54,8 +52,8 @@ function PortfolioCostValue() {
                     <Typography variant="h6">
                         Total Value
                     </Typography>
-                    <Typography variant="h3" className={dollar_value >= dollar_cost ? classes.positive : classes.negative}>
-                        {formatCurrency(dollar_value, currency, locale)}
+                    <Typography variant="h3" className={total_value >= totalCost ? classes.positive : classes.negative}>
+                        {formatCurrency(totalCost + unrGL, currency, locale)}
                     </Typography>
                 </Paper>
             </Grid>

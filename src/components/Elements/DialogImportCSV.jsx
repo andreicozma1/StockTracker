@@ -132,12 +132,20 @@ export default function DialogImportCSV({ open, onInsertAll, onClose, ...props }
                     var dtransDate = new Date(Date.parse(row[importer.xtransDate]));
                     var dtransType = row[importer.xtransType];
                     var dtransTicker = row[importer.xtransTicker];
-                    var dtransUnits = Number((row[importer.xtransUnits]).replace(/[^0-9.-]+/g, ""));
-                    var dtransPrice = Number((row[importer.xtransPrice]).replace(/[^0-9.-]+/g, ""));
+                    var dtransUnits = (row[importer.xtransUnits]).replace(/[^0-9.-]+/g, "");
+                    var dtransPrice = (row[importer.xtransPrice]).replace(/[^0-9.-]+/g, "");
                     var dtransFees = importer.xtransFees === "" ? 0 : Number((row[importer.xtransFees]).replace(/[^0-9.-]+/g, ""));
                     var dtransSplit = importer.xtransSplit === "" ? 1 : Number((row[importer.xtransSplit]).replace(/[^0-9.-]+/g, ""));
 
                     if (!dtransDate || !dtransType || !dtransTicker || !dtransUnits || !dtransPrice) {
+                        console.log(dtransDate);
+                        console.log(dtransType);
+                        console.log(dtransTicker);
+                        console.log(dtransUnits);
+                        console.log(dtransPrice);
+                        console.log(dtransFees);
+                        console.log(dtransSplit);
+
                         nonstock_rows++;
                         continue;
                     }
@@ -146,13 +154,13 @@ export default function DialogImportCSV({ open, onInsertAll, onClose, ...props }
                         date: dtransDate,
                         type: dtransType,
                         symbol: dtransTicker,
-                        units: dtransUnits,
-                        price: dtransPrice,
+                        units: Number(dtransUnits),
+                        price: Number(dtransPrice),
                         fees: dtransFees,
                         split: dtransSplit
                     };
 
-                    new_trans.id = dtransDate.getFullYear() + "-" + (dtransDate.getMonth() + 1) + "-" + dtransDate.getHours() + "-" + dtransDate.getMinutes() + "-" + dtransType + "-" + dtransTicker + "-" + dtransUnits + "-" + dtransPrice + "-" + dtransFees + "-" + dtransSplit;
+                    new_trans.id = dtransDate.getFullYear() + "-" + (dtransDate.getMonth() + 1) + "-" + (dtransDate.getDate()) + "-" + dtransDate.getHours() + "-" + dtransDate.getMinutes() + "-" + dtransType + "-" + dtransTicker + "-" + dtransUnits + "-" + dtransPrice + "-" + dtransFees + "-" + dtransSplit;
 
                     // console.log(resultobj);
                     success_rows++;
