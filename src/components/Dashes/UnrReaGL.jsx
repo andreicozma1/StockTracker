@@ -28,15 +28,13 @@ function formatCurrency(amount, currency, locale) {
     });
 }
 
-export default function UnrReaGL() {
+export default function UnrReaGL({ unrealized, realized }) {
     const classes = useStyles();
 
     const locale = 'en-US';
     const currency = "USD";
 
-    const dollar_unrealized = 1000;
-    const dollar_realized = -2500;
-    const dollar_total = dollar_unrealized + dollar_realized;
+    const dollar_total = unrealized + realized;
 
     return (
         <Grid container spacing={1}>
@@ -45,9 +43,10 @@ export default function UnrReaGL() {
                     <Typography variant="h6">
                         Unr. Gain/Loss
                     </Typography>
-                    <Typography variant="h4" className={dollar_unrealized >= 0 ? classes.positive : classes.negative}>
-                        {formatCurrency(dollar_unrealized, currency, locale)}
+                    <Typography variant="h4" className={unrealized >= 0 ? classes.positive : classes.negative}>
+                        {unrealized ? formatCurrency(unrealized, currency, locale) : "Loading..."}
                     </Typography>
+
                 </Paper>
             </Grid>
             <Grid item xs={4}>
@@ -55,9 +54,10 @@ export default function UnrReaGL() {
                     <Typography variant="h6">
                         Rea. Gain/Loss
                     </Typography>
-                    <Typography variant="h4" className={dollar_realized >= 0 ? classes.positive : classes.negative}>
-                        {formatCurrency(dollar_realized, currency, locale)}
+                    <Typography variant="h4" className={realized >= 0 ? classes.positive : classes.negative}>
+                        {realized ? formatCurrency(realized, currency, locale) : "Loading..."}
                     </Typography>
+
                 </Paper>
             </Grid>
             <Grid item xs={4}>
@@ -66,7 +66,7 @@ export default function UnrReaGL() {
                         Total Gain/Loss
                     </Typography>
                     <Typography variant="h4" className={dollar_total >= 0 ? classes.positive : classes.negative}>
-                        {formatCurrency(dollar_total, currency, locale)}
+                        {dollar_total ? formatCurrency(dollar_total, currency, locale) : "Loading..."}
                     </Typography>
                 </Paper>
             </Grid>

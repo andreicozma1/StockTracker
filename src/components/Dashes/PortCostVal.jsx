@@ -1,5 +1,6 @@
 
 import { Grid, makeStyles, Paper, Typography } from '@material-ui/core';
+import PropTypes from 'prop-types';
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -27,13 +28,13 @@ function formatCurrency(amount, currency, locale) {
     });
 }
 
-function PortfolioCostValue({ totalCost, unrGL }) {
+export default function PortfolioCostValue({ totalCost, totalValue }) {
     const classes = useStyles();
 
     const locale = 'en-US';
     const currency = "USD";
 
-    const total_value = totalCost + unrGL;
+    const diff = totalValue - totalCost;
 
     return (
         <Grid container spacing={1}>
@@ -43,7 +44,7 @@ function PortfolioCostValue({ totalCost, unrGL }) {
                         Total Cost
                     </Typography>
                     <Typography variant="h3">
-                        {formatCurrency(totalCost, currency, locale)}
+                        {totalCost ? formatCurrency(totalCost, currency, locale) : "Loading..."}
                     </Typography>
                 </Paper>
             </Grid>
@@ -52,8 +53,8 @@ function PortfolioCostValue({ totalCost, unrGL }) {
                     <Typography variant="h6">
                         Total Value
                     </Typography>
-                    <Typography variant="h3" className={total_value >= totalCost ? classes.positive : classes.negative}>
-                        {formatCurrency(totalCost + unrGL, currency, locale)}
+                    <Typography variant="h3" className={(diff > 0) ? classes.positive : ((diff < 0) ? classes.negative : null)}>
+                        {totalValue ? formatCurrency(totalValue, currency, locale) : "Loading..."}
                     </Typography>
                 </Paper>
             </Grid>
@@ -61,4 +62,7 @@ function PortfolioCostValue({ totalCost, unrGL }) {
     );
 }
 
-export default PortfolioCostValue;
+PortfolioCostValue.propTypes = {
+    totalCost: PropTypes.number.isRequired,
+    totalValue: PropTypes.number.isRequired,
+}

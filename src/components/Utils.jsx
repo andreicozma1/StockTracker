@@ -20,7 +20,7 @@ export function makeMenuItem(name, icon, callback) {
   return { name: name, icon: icon, callback: callback };
 }
 
-export async function fetchSummary(transactions) {
+export function fetchSummary(transactions) {
   // console.log(transactions)
 
   // console.log("values");
@@ -48,7 +48,7 @@ export async function fetchSummary(transactions) {
       const type = all_transactions[i].type.toLowerCase();
 
       all_transactions[i].trans_value = all_transactions[i].price * all_transactions[i].units;
-      all_transactions[i].cumulative_cost = all_transactions[i].prev_cost ? all_transactions[i].prev_cost : 0;
+      all_transactions[i].cumulative_cost = all_transactions[i].prev_cost >= 0 ? all_transactions[i].prev_cost : 0;
       all_transactions[i].prev_cost = (i > 0 ? all_transactions[i - 1].cumulative_cost : 0);
 
       // console.log(all_transactions[i].cumulative_cost)
@@ -58,6 +58,10 @@ export async function fetchSummary(transactions) {
       all_transactions[i].gains_loss_from_sale = 0;
       if (type.includes("buy")) {
         all_transactions[i].trans_value += all_transactions[i].fees;
+
+        // console.log(all_transactions[i].cumulative_cost)
+
+        // console.log(all_transactions[i].trans_value)
         all_transactions[i].cumulative_cost += all_transactions[i].trans_value;
 
         all_transactions[i].cumulative_units += all_transactions[i].units;
@@ -116,26 +120,6 @@ export async function fetchSummary(transactions) {
     summary[symbol].current_shares = all_transactions[all_transactions.length - 1].cumulative_units
     summary[symbol].current_investment = all_transactions[all_transactions.length - 1].cumulative_cost;
     summary[symbol].current_cost_per_share = summary[symbol].current_investment / summary[symbol].current_shares;
-
-
-    await axios.get('https://finnhub.io/api/v1/quote', {
-      params: {
-        symbol: symbol,
-        token: process.env.REACT_APP_FINNHUB_KEY
-      }
-    }).then(result => {
-      console.info("Got quote for " + symbol);
-      // console.log(result)
-      summary[symbol].quote = result.data;
-
-      summary[symbol].unrealized_gain_loss = (summary[symbol].quote.c - summary[symbol].current_cost_per_share) * summary[symbol].current_shares;
-      summary[symbol].unrealized_gain_loss_perc = summary[symbol].unrealized_gain_loss / summary[symbol].current_investment
-      summary[symbol].current_market_value = summary[symbol].current_investment + summary[symbol].unrealized_gain_loss;
-
-    }).catch((error) => {
-      console.info("Failed to get quote for " + symbol);
-      console.log(error);
-    });
   }
 
   return summary;

@@ -154,8 +154,8 @@ export default function DialogImportCSV({ open, onInsertAll, onClose, ...props }
                         date: dtransDate,
                         type: dtransType,
                         symbol: dtransTicker,
-                        units: Number(dtransUnits),
-                        price: Number(dtransPrice),
+                        units: parseFloat(dtransUnits),
+                        price: parseFloat(dtransPrice),
                         fees: dtransFees,
                         split: dtransSplit
                     };
