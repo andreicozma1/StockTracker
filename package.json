@@ -18,7 +18,7 @@
     "axios": "^0.21.1",
     "devextreme": "20.2.4",
     "devextreme-react": "20.2.4",
-    "dotenv": "^8.2.0",
+    "dotenv": "^8.6.0",
     "express": "^4.17.1",
     "moment": "^2.29.1",
     "mongodb": "^3.6.3",
